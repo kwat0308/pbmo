@@ -19,11 +19,11 @@ ext_module = [
     include_dirs=[
         'cpptasks/src'
     ],
-    extra_compile_args=[
-        '-std=c++14',  
-        '-Wno-unused-function',
-        '-Wno-write-strings',
-    ],
+    # extra_compile_args=[    # calls error when run by standard C++ compiler (Windows)
+    #     '-std=c++14',  
+    #     '-Wno-unused-function',
+    #     '-Wno-write-strings',
+    # ],
 ),
     Extension(
         'Matrix',
@@ -33,11 +33,11 @@ ext_module = [
         include_dirs=[
             'cpptasks/src'
         ],
-        extra_compile_args=[
-            '-std=c++14',  
-            '-Wno-unused-function',
-            '-Wno-write-strings',
-        ],
+        # extra_compile_args=[
+        #     '-std=c++14',  
+        #     '-Wno-unused-function',
+        #     '-Wno-write-strings',
+        # ],
     )
 ]
 
@@ -52,10 +52,16 @@ setup(
         'Intended Audience :: Developers',
         'Topic :: Software Development',
         'Topic :: Scientific/Engineering',
+        'Topic :: Scientific/Engineering :: Physics',
         'Operating System :: POSIX',
         'Operating System :: Unix',
         'Operating System :: MacOS',
         'Programming Language :: C++',
-        'Development Status :: 5 - Production/Stable',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+        'Development Status :: 3 - Alpha',
+        'Environment :: Console',
+        'Natural Language :: English',
+        
     ],
 )
