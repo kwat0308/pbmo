@@ -1,12 +1,12 @@
 /* This code aims to create a class of a matrix (2-d array) with some common properties as member functions.
 
-This code should have a Matrix class that has standard operations using vector<vector<T> > as our matrix.
+This code should have a Matrix class that has standard operations using built-in C array as our matrix.
 Our custom created Matrix class should: 
     - have the following members:
         - rowsize, columnsize, 2-d array (with template type T) - for now
     - be able to return the dimension of the matrix
     - be able to return the elements of the matrix
-        - this means we need to overload operator [] for subscripting (maybe not, since we are using std::vectors)
+        - this means we need to overload operator [] for subscripting
     - be able to assign elements to a variable (i.e. int var = mat[0][0])
     - be able to copy elements from some literal / variable (i.e. mat[1][2] = 10)
     - be able to assign a Matrix to another Matrix
@@ -25,121 +25,137 @@ With this, we can compare our Matrix class to:
     - from external libraries like Boost / Eigen
 */
 
-#include <vector>
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <math.h>
 #include <stdexcept>
-#include <ios>
-#include <numeric>
+// #include <numeric>
 
-#include "../include/Matrix.h"   // header file
+#include "Matrix.h" // header file
 
 // constructor with specified rowsize and columnsize rs, cs
 // default constructor
 // initialize a rs x cs matrix (filled with zero value)
-Matrix::Matrix(const int& rs, const int& cs) 
-: rsz{rs}, csz{cs}, m{new double[rs*cs]} 
+Matrix::Matrix(const int rs, const int cs)
+    : rsz{rs}, csz{cs}, m{new double[rs * cs]}
 {
-    for (int i=0; i<rsz; ++i) {
-        for (int j=0; j<csz; ++j) {
-            m[i*csz + j] = 0.0;   // assign zero value to each index in memory
+    for (int i = 0; i < rsz; ++i)
+    {
+        for (int j = 0; j < csz; ++j)
+        {
+            m[i * csz + j] = 0.0; // assign zero value to each index in memory
         }
     }
 }
-
 
 // constructor with specified rowsize and columnsize rs, cs
 // with given data as a 1-d array (2-d array cant be used as parameter unless we know row length)
 // initialize a rs x cs matrix
-Matrix::Matrix(const int& rs, const int& cs, double data[]) 
-: rsz{rs}, csz{cs}, m{new double[rs*cs]} 
+Matrix::Matrix(const int rs, const int cs, double data[])
+    : rsz{rs}, csz{cs}, m{new double[rs * cs]}
 {
-    if (sizeof(&data) == sizeof(m)) {   // if data size == pointer size
-        for (int i=0; i<rsz; ++i) {
-            for (int j=0; j<csz; ++j) {
-                m[i*csz + j] = data[i*csz + j];   // assign zero value to each index in memory
+    if (sizeof(&data) == sizeof(m)) // if data size == pointer size
+    { 
+        for (int i = 0; i < rsz; ++i)
+        {
+            for (int j = 0; j < csz; ++j)
+            {
+                m[i * csz + j] = data[i * csz + j]; // assign zero value to each index in memory
             }
         }
     }
-        
 }
 
-// constructor with specified rowsize and column size rs, cs 
+// constructor with specified rowsize and column size rs, cs
 // where we read values from some dataset
-// Let's assume (for simplicity) that all data are separated by whitespace
-// and that there are no headers 
-// also that they are .txt files and no other format
+// Assume (for simplicity) that all data are separated by whitespace
+// and that there are no headers
 // also assume that we know the row and column size of the dataset
-Matrix::Matrix(const int& rs, const int& cs, const std::string& fname)
-: rsz{rs}, csz{cs}, m{new double[rs*cs]}
+Matrix::Matrix(const int rs, const int cs, const std::string &fname)
+    : rsz{rs}, csz{cs}, m{new double[rs * cs]}
 {
-    std::ifstream ifs {fname};
-    if (!ifs) {throw std::runtime_error("Cannot open file!");}
-
-    double val;
-    std::string line;  
-    int i = 0;   // row index
-
-    while (std::getline(ifs, line)) {   // read each line in file
-        int j=0; // column index
-        std::istringstream ss {line};  // stringstream of each row
-        while (ss >> val) {
-            m[i*csz + j] = val;   // set value
-            ++j;  // increment column index
-        }
-
-        ++i;   // increment row index
+    std::ifstream ifs{fname};
+    if (!ifs)
+    {
+        throw std::runtime_error("Cannot open file!");
     }
 
+    double val;
+    std::string line;
+    int i = 0; // row index
+
+    while (std::getline(ifs, line))
+    {                                // read each line in file
+        int j = 0;                   // column index
+        std::istringstream ss{line}; // stringstream of each row
+        while (ss >> val)
+        {
+            m[i * csz + j] = val; // set value
+            ++j;                  // increment column index
+        }
+
+        ++i; // increment row index
+    }
 }
 
 // // copy constructor
-Matrix::Matrix(const Matrix& mat) 
-:rsz{mat.rsz}, csz{mat.csz}, m{new double[mat.rsz*mat.csz]}
-{   
-    if (dim_equal(mat)) {
-        std::copy(mat.m, mat.m+(mat.rsz*mat.csz), m);
+Matrix::Matrix(const Matrix &mat)
+    : rsz{mat.rsz}, csz{mat.csz}, m{new double[mat.rsz * mat.csz]}
+{
+    if (dim_equal(mat))
+    {
+        std::copy(mat.m, mat.m + (mat.rsz * mat.csz), m);
     }
-    else {throw std::runtime_error("Dimensions must be equal!");}
+    else
+    {
+        throw std::runtime_error("Dimensions must be equal!");
+    }
 }
 
 // copy assignment
-Matrix& Matrix::operator=(const Matrix& mat) 
-{   
-    if (dim_equal(mat)) {
-        double* p = new double[mat.rsz*mat.csz];
+Matrix &Matrix::operator=(const Matrix &mat)
+{
+    if (dim_equal(mat))
+    {
+        double *p = new double[mat.rsz * mat.csz];
         // m = mat.m;
-        std::copy(mat.m, mat.m+(mat.rsz*mat.csz), p);
+        std::copy(mat.m, mat.m + (mat.rsz * mat.csz), p);
         delete[] m;
         m = p;
         rsz = mat.rsz;
         csz = mat.csz;
         return *this;
     }
-    else {throw std::runtime_error("Dimensions must be equal!");}
+    else
+    {
+        throw std::runtime_error("Dimensions must be equal!");
+    }
 }
 
 // move constructor
-Matrix::Matrix(Matrix&& mat)
-:rsz{mat.rsz}, csz{mat.csz}, m{new double[mat.rsz*mat.csz]}
+Matrix::Matrix(Matrix &&mat)
+    : rsz{mat.rsz}, csz{mat.csz}, m{new double[mat.rsz * mat.csz]}
 {
-    if (dim_equal(mat)) {
+    if (dim_equal(mat))
+    {
         mat.rsz = 0;
         mat.csz = 0;
         mat.m = nullptr;
     }
 
-    else {throw std::runtime_error("Dimensions must be equal!");}
-    
+    else
+    {
+        throw std::runtime_error("Dimensions must be equal!");
+    }
 }
 
 // move assignment
-Matrix& Matrix::operator=(Matrix&& mat)
+Matrix &Matrix::operator=(Matrix &&mat)
 {
-    if (dim_equal(mat)) {
+    if (dim_equal(mat))
+    {
         delete[] m;
         m = mat.m;
         rsz = mat.rsz;
@@ -151,112 +167,122 @@ Matrix& Matrix::operator=(Matrix&& mat)
         return *this;
     }
 
-    else {throw std::runtime_error("Dimensions must be equal!");}
+    else
+    {
+        throw std::runtime_error("Dimensions must be equal!");
+    }
 }
 
 // check if two matrices have the same dimensions
-bool Matrix::dim_equal(const Matrix& M) 
+bool Matrix::dim_equal(const Matrix &M)
 {
-    return rsz == M.rowsize() && \
-            csz == M.columnsize();
+    return rsz == M.rowsize() &&
+           csz == M.columnsize();
 }
 
 // inner product between two matrices
-double Matrix::inner_prod(const Matrix& M)
+double Matrix::inner_prod(const Matrix &M)
 {
-    double inner_prod {0.};
+    double inner_prod{0.};
 
-    if (dim_equal(M)) {
-        for (int i=0; i<rsz; ++i) {
-            for (int j=0; j<csz; ++j) {
-                inner_prod += m[i*csz+j] * M.get_value(i,j);
+    if (dim_equal(M))
+    {
+        for (int i = 0; i < rsz; ++i)
+        {
+            for (int j = 0; j < csz; ++j)
+            {
+                inner_prod += m[i * csz + j] * M.get_value(i, j);
             }
         }
 
         return inner_prod;
     }
-    else {
+    else
+    {
         throw std::runtime_error("Dimensions of Matrices not equal!");
     }
 }
 
-
 // norm of matrix
 double Matrix::norm()
 {
-    double norm {0.};
+    double norm{0.};
 
-    for (int i=0; i<rsz; ++i) {
-        for (int j=0; j<csz; ++j) {
-            norm += abs(get_value(i,j)*get_value(i,j));
+    for (int i = 0; i < rsz; ++i)
+    {
+        for (int j = 0; j < csz; ++j)
+        {
+            norm += abs(get_value(i, j) * get_value(i, j));
         }
     }
-    
+
     return sqrt(norm);
 }
 
 // print matrix
 void Matrix::print_mat()
 {
-    int rszlim {50};   // row/column size limit if "too large"
+    int rszlim{50}; // row/column size limit if "too large"
 
-    std::cout << "Matrix (" << rsz << "-by-" << csz << "): \n";
-    std::cout << "{\n";
-    if (rsz > rszlim) {   // for large rows print using ... notation
-            for (int i=0; i<3; ++i) {
-                print_row(i);
-            }
-            std::cout << "\t...\n";
-            for (int j=3; j>0; --j) {
-                print_row(rsz-j);
-            }
+    std::cout << "Matrix (" << rsz << "-by-" << csz << "): " << std::endl;
+    std::cout << '{' << std::endl;
+    if (rsz > rszlim)
+    { // for large rows print using ... notation
+        for (int i = 0; i < 3; ++i)
+        {
+            print_row(i);
         }
-    else {   // otherwise print the whole matrix
-        for (int i=0; i<rsz; ++i) {
+        std::cout << "\t..." << std::endl;
+        for (int j = 3; j > 0; --j)
+        {
+            print_row(rsz - j);
+        }
+    }
+    else
+    { // otherwise print the whole matrix
+        for (int i = 0; i < rsz; ++i)
+        {
             print_row(i);
         }
     }
-    std::cout << "}\n";
+    std::cout << '}' << std::endl;
 }
 
-
-void Matrix::print_row(const int& i)
+void Matrix::print_row(const int i)
 {
-    int cszlim {50};  // column size limit
+    int cszlim{50}; // column size limit
 
     std::cout << "\t{";
-    if (csz > cszlim) {   // for large columns print using ... notation
-            for (int j=0; j<3; ++j) {
-                std::cout << get_value(i,j) << ' ';
-            }
-            std::cout << "... ";
-            for (int j=3; j>0; --j) {
-                std::cout << get_value(i,csz-j) << ' ';
-            }
+    if (csz > cszlim)
+    { // for large columns print using ... notation
+        for (int j = 0; j < 3; ++j)
+        {
+            std::cout << get_value(i, j) << ' ';
         }
-    else {   // otherwise print the whole matrix
-        for (int j=0; j<csz; ++j) {
-            std::cout << get_value(i,j) << ' ';
+        std::cout << "... ";
+        for (int j = 3; j > 0; --j)
+        {
+            std::cout << get_value(i, csz - j) << ' ';
         }
     }
-    
-    std::cout << "}\n";
+    else
+    { // otherwise print the whole matrix
+        for (int j = 0; j < csz; ++j)
+        {
+            std::cout << get_value(i, j) << ' ';
+        }
+    }
+
+    std::cout << '}' << std::endl;
 }
 
-
-
-
-
-
-
-
-// constructor with specified rowsize and column size rs, cs 
+// constructor with specified rowsize and column size rs, cs
 // where we read values from some dataset
 // Let's assume (for simplicity) that all data are separated by comma
-// and that there are no headers 
+// and that there are no headers
 // also that they are .txt files and no other format
 // also assume that we know the row and column size of the dataset
-// Matrix Matrix::import_data(const int& rs, const int& cs, const std::string& fname)
+// Matrix Matrix::import_data(const int rs, const int cs, const std::string& fname)
 // {
 //     std::ifstream ifs {fname};
 //     Matrix M {rs, cs};
@@ -264,7 +290,7 @@ void Matrix::print_row(const int& i)
 //     double val;
 //     char comma;
 
-//     std::string line, ss;  
+//     std::string line, ss;
 //     int i = 0;   // row index
 
 //     while (std::getline(ifs, line)) {   // read each line in .csv file
@@ -289,17 +315,14 @@ void Matrix::print_row(const int& i)
 //     //         // }
 //     //         ifs >> val;  // read one element
 //     //         std::cout << val;
-//     //         if (!ifs) {  
+//     //         if (!ifs) {
 //     //             throw std::runtime_error("Cannot read file!");
 //     //         }
 //     //         m[i*csz + j] = val;   // assign pointer value to read value
 //     //     }
 //     // }
 
-
 // }
-
-
 
 /*
 // input operator for importing csv files
@@ -372,6 +395,3 @@ std::istream& operator>>(std::istream& is, std::vector<double> vec)
 //     }
 // }
 */
-
-
-
