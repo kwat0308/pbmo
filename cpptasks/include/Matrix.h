@@ -1,4 +1,7 @@
 // contains class declarations of Matrix class
+#ifndef __MATRIX_H_
+#define __MATRIX_H_
+
 
 #include <vector>
 #include <string>
@@ -79,3 +82,5 @@ class Matrix {
         ~Matrix() {delete[] m;}
 
 };
+
+#endif
