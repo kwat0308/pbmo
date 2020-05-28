@@ -16,9 +16,6 @@ ext_module = [
     sources=["cpptasks/src/funcs.cc", "cpptasks/src/funcs_wrapper.cc"],
     depends=[],
     language='c++',
-    include_dirs=[
-        'cpptasks/src'
-    ],
     # extra_compile_args=[    # calls error when run by standard C++ compiler (Windows)
     #     '-std=c++14',  
     #     '-Wno-unused-function',
@@ -31,7 +28,7 @@ ext_module = [
         depends=[],
         language='c++',
         include_dirs=[
-            'cpptasks/src'
+            'cpptasks/include'
         ],
         # extra_compile_args=[
         #     '-std=c++14',  
