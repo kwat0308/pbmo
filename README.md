@@ -1,17 +1,17 @@
 # cpptasks
 Performance benchmark for C++ and Python using a Matrix class
 
+###### Notes for Window command prompt users
+- All python commands (ex. **python setup.py build_ext**) should be replaced with **py** instead. 
+- A **.exe** extension should be applied instead of a **.o** extension for object codes.
+
 ## Requirements
-- Python 3 or above
+- Python3 or above
 - numpy and matplotlib modules in Python
 - C++11 or above
 - uBLAS library in Boost
 - A C++ compiler (g++, CLANG++, or Microsoft C++ compiler)
 - pybind11 
-
-###### Notes for Window command prompt users
-- All python commands (ex. **python setup.py build_ext**) should be replaced with **py** instead. 
-- A **.exe** extension should be applied instead of a **.o** extension for object codes.
 
 ## Installation of user-defined Matrix module
 The C++ library can simply be installed by using the usual **pip** command: **pip install .**  .  Alternatively, the package can be install by using a Python command: **python setup.py build_ext**.
