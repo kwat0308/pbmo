@@ -3,7 +3,9 @@ Performance benchmark for C++ and Python using a Matrix class
 
 ## Requirements
 - Python 3 or above
+- numpy and matplotlib modules in Python
 - C++11 or above
+- uBLAS library in Boost
 - A C++ compiler (g++, CLANG++, or Microsoft C++ compiler)
 
 ## Installation of user-defined Matrix module
@@ -17,6 +19,6 @@ To test how the perfomance of a **numpy** array compares with the matrix constru
 To compare between matrices constructed from the **uBLAS** library from **Boost** and the user-defined Matrix class, perform the following steps:
   1. Make sure that the data files **small_data.txt** and **large_data.txt** exist in the **data** directory. If not, run **python test/test_matrix.py** after installing the C++ library.
   2. Compile the source code from the project directory. The command used will differ depending on your compiler. 
-    a. If you are using the Microsoft C++ compiler from command line, run the following command: **cl.exe /EHsc /Fe"cpptasks\src\test_matrix.exe" /I cpptasks\include /I ..\..\apps\boost_1_73_0 cpptasks\src\test_matrix.cc cpptasks\src\Matrix.cc**
+    a. If you are using the Microsoft C++ compiler from command line, run the following command: **cl.exe /EHsc /Fe"cpptasks\src\test_matrix.exe" /I cpptasks\include /I \path\to\boost cpptasks\src\test_matrix.cc cpptasks\src\Matrix.cc**
     b. If you are using a Unix system with terminal (either a g++ or CLANG++ compiler), run the following command: **g++ -o cpptasks/src/test_matrix cpptasks/src/test_matrix.cc cpptasks/src/Matrix.cc**. For CLANG++, replace **g++** with **clang++**.
   3. Run the compiled code by using the following command: **./cpptasks/src/test_matrix.exe** (for Windows C++ compiler) / **./cpptasks/src/test_matrix** (for g++ / CLANG++ compiler).
