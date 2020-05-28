@@ -44,4 +44,4 @@ public:
     ~Matrix() { delete[] m; }
 };
 
-#endif
+#endif  //__MATRIX_H_
