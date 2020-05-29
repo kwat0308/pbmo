@@ -13,7 +13,8 @@ private:
 public:
     //constructor
     Matrix(const int, const int);
-    Matrix(const int, const int, double data[]);
+    // Matrix(const int, const int, double data[]);
+    Matrix(const int, const int, double*);
     Matrix(const int, const int, const std::string &);
     // copy
     Matrix(const Matrix &);            // copy constructor

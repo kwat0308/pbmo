@@ -50,22 +50,30 @@ Matrix::Matrix(const int rs, const int cs)
     }
 }
 
+// // constructor with specified rowsize and columnsize rs, cs
+// // with given data as a 1-d array (2-d array cant be used as parameter unless we know row length)
+// // initialize a rs x cs matrix
+// Matrix::Matrix(const int rs, const int cs, double data[])
+//     : rsz{rs}, csz{cs}, m{new double[rs * cs]}
+// {
+//     if (sizeof(&data) == sizeof(m)) // if data size == pointer size
+//     { 
+//         for (int i = 0; i < rsz; ++i)
+//         {
+//             for (int j = 0; j < csz; ++j)
+//             {
+//                 m[i * csz + j] = data[i * csz + j]; // assign zero value to each index in memory
+//             }
+//         }
+//     }
+// }
+
 // constructor with specified rowsize and columnsize rs, cs
-// with given data as a 1-d array (2-d array cant be used as parameter unless we know row length)
-// initialize a rs x cs matrix
-Matrix::Matrix(const int rs, const int cs, double data[])
-    : rsz{rs}, csz{cs}, m{new double[rs * cs]}
+// where values are obtained from any pointer
+Matrix::Matrix(const int rs, const int cs, double* p)
+    :rsz{rs}, csz{cs}, m{p}
 {
-    if (sizeof(&data) == sizeof(m)) // if data size == pointer size
-    { 
-        for (int i = 0; i < rsz; ++i)
-        {
-            for (int j = 0; j < csz; ++j)
-            {
-                m[i * csz + j] = data[i * csz + j]; // assign zero value to each index in memory
-            }
-        }
-    }
+    
 }
 
 // constructor with specified rowsize and column size rs, cs

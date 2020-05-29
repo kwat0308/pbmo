@@ -10,8 +10,9 @@ PYBIND11_MODULE(Matrix, M)
     // matrix class
     M.doc() = "Matrix class composed of 2-D arrays.";
     py::class_<Matrix>(M, "Matrix")
-        .def(py::init<const int &, const int &>())
-        .def(py::init<const int &, const int &, const std::string &>())
+        .def(py::init<const int, const int>())
+        .def(py::init<const int, const int, double*>())
+        .def(py::init<const int, const int, const std::string &>())
         .def_property("value", &Matrix::get_value, &Matrix::set_value)
         .def_property_readonly("rowsize", &Matrix::rowsize)
         .def_property_readonly("columnsize", &Matrix::columnsize)
