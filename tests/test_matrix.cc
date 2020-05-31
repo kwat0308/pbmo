@@ -7,9 +7,9 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 
-using namespace boost::numeric::ublas;
+using namespace boost::numeric;
 
-void read_from_file(matrix<double> &bmat, const std::string &fname)
+void read_from_file(ublas::matrix<double> &bmat, const std::string &fname)
 {
     std::ifstream ifs{fname};
 
@@ -52,9 +52,11 @@ int main()
     // create matrices and print them out
     Matrix myMat{rs, cs, fname};
     // Matrix *myMat = new Matrix {rs, cs, fname};
+    // double my_norm;
+    // myMat->norm() = my_norm;
     // myMat.print_mat();
 
-    matrix<double> bMat(rs, cs);
+    ublas::matrix<double> bMat(rs, cs);
     read_from_file(bMat, fname);
     // std::cout << bMat << '\n';
 
