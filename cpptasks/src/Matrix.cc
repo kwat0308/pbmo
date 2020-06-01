@@ -29,6 +29,8 @@ With this, we can compare our Matrix class to:
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 #include <math.h>
 #include <stdexcept>
 // #include <numeric>
@@ -50,31 +52,70 @@ Matrix::Matrix(const int rs, const int cs)
     }
 }
 
-// // constructor with specified rowsize and columnsize rs, cs
-// // with given data as a 1-d array (2-d array cant be used as parameter unless we know row length)
-// // initialize a rs x cs matrix
-// Matrix::Matrix(const int rs, const int cs, double data[])
-//     : rsz{rs}, csz{cs}, m{new double[rs * cs]}
-// {
-//     if (sizeof(&data) == sizeof(m)) // if data size == pointer size
-//     { 
-//         for (int i = 0; i < rsz; ++i)
-//         {
-//             for (int j = 0; j < csz; ++j)
-//             {
-//                 m[i * csz + j] = data[i * csz + j]; // assign zero value to each index in memory
-//             }
-//         }
-//     }
-// }
+// constructor with specified rowsize and columnsize rs, cs
+// with given data as a 1-d array (2-d array cant be used as parameter unless we know row length)
+// initialize a rs x cs matrix
+Matrix::Matrix(const int rs, const int cs, const double *dp)
+    : rsz{rs}, csz{cs}, m{new double[rs * cs]}
+{
+    if (sizeof(dp) == sizeof(m)) // if data size == pointer size
+    {
+        int i = 0;
+        int len = rs * cs;
+        while (i < len)
+        {
+            *m++ = *dp++;
+            ++i;
+        }
+    }
+    else
+    {
+        throw std::runtime_error("Pointer dimensions dont match!");
+    }
+}
 
 // constructor with specified rowsize and columnsize rs, cs
-// where values are obtained from any pointer
-Matrix::Matrix(const int rs, const int cs, double* p)
-    :rsz{rs}, csz{cs}, m{p}
+// where values are obtained from a numpy array
+// we equate the pointers together to pass-by-reference
+// source: https://www.linyuanshi.me/post/pybind11-array/
+Matrix::Matrix(const pybind11::array_t<double> &arr)
 {
-    
+    // request buffer info from numpy array
+    pybind11::buffer_info buf = arr.request();
+
+    // set row and column size
+    rsz = buf.shape[0];
+    csz = buf.shape[1];
+
+    // allocate new space in free store for pointer
+    m = new double[rsz * csz];
+
+    // set a new pointer ptr to the buffer pointer
+    double *ptr = (double *)buf.ptr;
+
+    // set pointer to buffer pointer
+    for (int i = 0; i < rsz; ++i)
+    {
+        for (int j = 0; j < csz; ++j)
+        {
+            m[i * csz + j] = ptr[i * csz + j];
+        }
+    }
 }
+
+// // constructor with specified rowsize and columnsize rs, cs
+// // where values are obtained from a numpy array
+// // we equate the pointers together to pass-by-reference
+// // source: https://www.linyuanshi.me/post/pybind11-array/
+// Matrix::Matrix(const int rs, const int cs, const pybind11::array_t<double>& arr)
+//     :rsz{rs}, csz{cs}, m{new double[rs*cs]}
+// {
+//     // request buffer info from numpy array
+//     pybind11::buffer_info buf = arr.request();
+
+//     // now set pointer to pointer of buffer
+//     m = (double*) buf.ptr;
+// }
 
 // constructor with specified rowsize and column size rs, cs
 // where we read values from some dataset
@@ -184,8 +225,8 @@ Matrix &Matrix::operator=(Matrix &&mat)
 // check if two matrices have the same dimensions
 bool Matrix::dim_equal(const Matrix &M)
 {
-    return rsz == M.rowsize() &&
-           csz == M.columnsize();
+    return rsz == M.rows() &&
+           csz == M.cols();
 }
 
 // inner product between two matrices
@@ -284,6 +325,20 @@ void Matrix::print_row(const int i)
     std::cout << '}' << std::endl;
 }
 
+// // constructor with specified rowsize and columnsize rs, cs
+// // where values are obtained from any pointer
+// Matrix::Matrix(const int rs, const int cs, double* arr)
+//     :rsz{rs}, csz{cs}, m{new double[rs*cs]}
+// {
+//     for (int i = 0; i < rsz; ++i)
+//     {
+//         for (int j = 0; j < csz; ++j)
+//         {
+//             m[i * csz + j] = arr[i * csz + j]; // assign zero value to each index in memory
+//         }
+//     }
+// }
+
 // constructor with specified rowsize and column size rs, cs
 // where we read values from some dataset
 // Let's assume (for simplicity) that all data are separated by comma
@@ -379,8 +434,8 @@ std::istream& operator>>(std::istream& is, std::vector<double> vec)
 // // check if two matrices have the same dimensions
 // bool dim_equal(const Matrix& M1, const Matrix& M2) 
 // {
-//     return M1.rowsize() == M2.rowsize() && \
-//             M1.columnsize() == M2.columnsize();
+//     return M1.rows() == M2.rows() && \
+//             M1.cols() == M2.cols();
 // }
 
 // // inner product between two matrices
@@ -389,8 +444,8 @@ std::istream& operator>>(std::istream& is, std::vector<double> vec)
 //     std::vector<double> ipvec;
 
 //     if (dim_equal(M1, M2)) {
-//         for (int i=0; i<M1.rowsize(); ++i) {
-//             for (int j=0; j<M1.columnsize(); ++j) {
+//         for (int i=0; i<M1.rows(); ++i) {
+//             for (int j=0; j<M1.cols(); ++j) {
 //                 ipvec.push_back(M1.value(i,j) * M2.value(i,j));
 //             }
 //         }

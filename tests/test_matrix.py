@@ -22,7 +22,7 @@ def make_data(rs, cs, size):
 
 # test the performance of the evaluation of C++ and numpy norm
 def test_performance(arr, cpp_mat, args):
-    max_iter = 1e6    # number of iterations for evaluation of norm
+    max_iter = 10000    # number of iterations for evaluation of norm
     dim = arr.shape
 
     # get average time of norm evaluation for both arrays
@@ -34,7 +34,7 @@ def test_performance(arr, cpp_mat, args):
     np_timearr = np.zeros(max_iter)
     
     i=0
-    while (i < max_iter):
+    while (i <= max_iter):
         #C++ norm
         cpp_norm_t0 = time.time()
         cpp_norm = cpp_mat.norm()
@@ -44,20 +44,24 @@ def test_performance(arr, cpp_mat, args):
         np_norm = np.linalg.norm(arr)
         np_norm_t1 = time.time()
 
-        if args.verbosity > 3:
-            print("Norm values: C++: {0}, numpy: {1}".format(cpp_norm, np_norm))
-            print("Time for C++ matrix norm ({0}-by-{1} matrix): {2}s".format(
-                dim[0], dim[1], cpp_norm_t1 - cpp_norm_t0))
-            print("Time for numpy matrix norm ({0}-by-{1} matrix): {2}s\n".format(
-                dim[0], dim[1], np_norm_t1 - np_norm_t0))
+        # progression status message for each tenth of the loop
+        if i%(max_iter//10) == 0:
+            print("Progression status: {0} iterations completed.\n".format(i))
+            if args.verbosity > 3:
+                print("Results for {0}th iteration:\n".format(i))
+                print("Norm values: C++: {0}, numpy: {1}".format(cpp_norm, np_norm))
+                print("Time for C++ matrix norm ({0}-by-{1} matrix): {2}s".format(
+                    dim[0], dim[1], cpp_norm_t1 - cpp_norm_t0))
+                print("Time for numpy matrix norm ({0}-by-{1} matrix): {2}s\n".format(
+                    dim[0], dim[1], np_norm_t1 - np_norm_t0))
 
         # only append after first iteration
         if i > 0:
-            cpp_normarr[i] = cpp_norm
-            np_normarr[i] = np_norm
+            cpp_normarr[i-1] = cpp_norm
+            np_normarr[i-1] = np_norm
 
-            cpp_timearr[i] = cpp_norm_t1 - cpp_norm_t0
-            np_timearr[i] = np_norm_t1 - np_norm_t0
+            cpp_timearr[i-1] = cpp_norm_t1 - cpp_norm_t0
+            np_timearr[i-1] = np_norm_t1 - np_norm_t0
 
         i+=1  # increment
     
@@ -97,16 +101,17 @@ def test_with_nparray(rs, cs, scale, args):
     for arr in (small_arr, large_arr):
         # first initialize the matrix in C++
         cpp_mat_t0 = time.time()
-        cpp_mat = Matrix.Matrix(arr.shape[0], arr.shape[1],
-                                arr.data)  # 3x4 matrix
+        # cpp_mat = Matrix.Matrix(arr.shape[0], arr.shape[1],
+        #                         arr)
+        cpp_mat = Matrix.Matrix(arr)
         cpp_mat_t1 = time.time()
 
-        if args.verbosity > 1:
+        if args.verbosity > 0:
             cpp_mat.print_mat()  # print c++ matrix
             print(arr)   # print numpy matrix
-        if args.verbosity > 0:
+        if args.verbosity > 1:
             print("Time for creating C++ matrix ({0}-by-{1}): {2}s\n".format(
-                cpp_mat.rowsize(), cpp_mat.columnsize(), cpp_mat_t1 - cpp_mat_t0))   # print time of initialization
+                cpp_mat.rows, cpp_mat.cols, cpp_mat_t1 - cpp_mat_t0))   # print time of initialization
 
         # now just test performance for evaluation of norm
         test_performance(arr, cpp_mat, args)
@@ -120,7 +125,7 @@ def test_with_datafile(rs, cs, scale, args):
     size_config = [(rs, cs, "small"), (rs*scale, cs*scale, "large")]
 
     for (rs, cs, size) in size_config:
-        fname = "{0}_data.txt".format(size)
+        fname = "{0}_data.tsv".format(size)
         fpath = os.path.join(cwd, "data", fname)
         # create our text files if not created yet
         if not os.path.isfile(fpath):
@@ -129,12 +134,12 @@ def test_with_datafile(rs, cs, scale, args):
         # initialize C++ matrix
         cpp_mat_t0 = time.time()
         cpp_mat = Matrix.Matrix(rs, cs,
-                                "data/{0}_data.txt".format(size))  # 3x4 matrix
+                                "data/{0}_data.tsv".format(size)) 
         cpp_mat_t1 = time.time()
         
         # also initialize numpy array
         np_mat_t0 = time.time()
-        np_mat = np.loadtxt("data/{0}_data.txt".format(size), delimiter="\t")
+        np_mat = np.loadtxt("data/{0}_data.tsv".format(size), delimiter="\t")
         np_mat_t1 = time.time()
 
         if args.verbosity > 1:
@@ -142,7 +147,7 @@ def test_with_datafile(rs, cs, scale, args):
             print(np_mat)   # print numpy matrix
         if args.verbosity > 0:
             print("Time for creating C++ matrix ({0}-by-{1}): {2}s\n".format(
-                cpp_mat.rowsize(), cpp_mat.columnsize(), cpp_mat_t1 - cpp_mat_t0))   # print time of initialization
+                cpp_mat.rows, cpp_mat.cols, cpp_mat_t1 - cpp_mat_t0))   # print time of initialization
             print("Time for creating numpy matrix ({0}-by-{1}): {2}s\n".format(
                 np_mat.shape[0], np_mat.shape[1], np_mat_t1 - np_mat_t0))   # print time of initialization
 
@@ -157,11 +162,11 @@ def main():
     parser = argparse.ArgumentParser(description="Tests performance benchmarks for C++ and Python using data files and numpy arrays.")
     # add necessary flags
     # choose whether to test performance benchmark with datafile or with numpy arrays or both
-    parser.add_argument("-m", "--mode", dest="mode", type=str, default="both", help='Choose test mode (datafile (using datafiles), np_array(using numpy arrays), or both).')
+    parser.add_argument("-m", "--mode", dest="mode", type=str, default="both", help="Choose test mode (datafile (using datafiles), np_array(using numpy arrays), or both).")
     # set verbosity
     parser.add_argument("-v", "--verbosity", dest="verbosity", type=int, default=0, help="Set the level of verbosity for debugging purposes (0 (lowest) to 4 (highest)).")
     # set debug mode
-    parser.add_argument("-d", "--debug", dest="debug_mode", type=bool, default=False, help="Set program to debug mode (verbosity = 3, use default row / column size of 3, 4)")
+    parser.add_argument("-d", "--debug", dest="debug_mode", action="store_true", help="Set program to debug mode (verbosity = 3, use default row / column size of 3, 4)")
     # create argument object that contains truth conditions for plot condition or save condition
     args = parser.parse_args()
     mode = args.mode
@@ -170,12 +175,12 @@ def main():
     if args.debug_mode:
         rs = 3
         cs = 4
-        args.verbosity = 3
+        scale = 1000  # set scaling factor by 1000 for large matrices
+        args.verbosity = 4 
     else:
         rs = int(input("Please enter dimension for rows for matrix: "))
         cs = int(input("Please enter dimension for columns for matrix: "))
-
-    scale = 1000   # set scaling factor by 1000 for large matrices (we can make this user input as well)
+        scale = int(input("Enter the scaling factor (integer) used for performance test for a large matrix: "))
 
     if mode.find("np_array") != -1:
         test_with_nparray(rs, cs, scale, args)    # test with numpy array
