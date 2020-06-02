@@ -30,7 +30,7 @@ Available flags:
 - **--mode, -m**: Set whether to benchmark performance from a datafile, a numpy array, or both (inputs: datafile, np_array, or both). Default is both.
 - **--debug, -d**: Activate debugging mode. Sets verbosity to level 4 and presets rowsize = 3, columnsize = 4, scale = 1000.
 
-###### Tasks
+## Tasks
 - [x] Implement performance benchmarks in Python with datafiles
 - [x] Implement performance benchmarks in Python with iterations
 - [x] Implement constructors that pass numpy arrays by reference
