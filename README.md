@@ -1,4 +1,4 @@
-# cpptasks
+# CPPPythonMatrixBenchmark
 This project compares the performance between a built-in array, an external C++ library, and Python (numpy) by evaluating the norm from matrices constructed using C-arrays, the uBLAS library from Boost, and a numpy array. 
 
 ###### Notes for Window command prompt users
@@ -20,8 +20,8 @@ The module containing the relavent classes can be installed in the following way
 2. using **python**: **python setup.py build_ext**, then **python setup.py install**
 The modules for the user-defined Matrix class (matrices created from C-arrays) can be imported with **Matrix**. The module for matrices constructed from Boost can be imported with **BoostMatrix**.
 - If a different C++ compiler is being used, make sure to change the compiler configurations (**os.environ["CC"]**) in the top of the file **setup.py**.
-- If you do not have **pybind11** installed, install from **pip** by using the following command: **pip install pybind11**. Alternatively, this can be downloaded using **git clone** from [here] (https://github.com/pybind/pybind11/tree/stable).
-- If you do not have **Boost** installed, install it from [here] (https://www.boost.org/doc/libs/1_73_0/more/getting_started/windows.html).
+- If you do not have **pybind11** installed, install from **pip** by using the following command: **pip install pybind11**. Alternatively, this can be downloaded using **git clone** from [here](https://github.com/pybind/pybind11/tree/stable).
+- If you do not have **Boost** installed, install it from [here](https://www.boost.org/doc/libs/1_73_0/more/getting_started/windows.html).
 
 ## Testing for performance
 Performance test can be run by **python tests/test_matrix.py**. This compares the performance for a small and large matrix. The rows and columns of the smaller matrix, as well as the scaling factor of the smaller vs larger matrix, is set by user input. The constructed numpy array / datafile will have random values from 0-1 as elements with the provided shape. 
@@ -30,7 +30,7 @@ Available flags:
 - **--mode, -m**: Set whether to benchmark performance from a datafile, a numpy array, or both (inputs: datafile, np_array, or both). Default is both.
 - **--debug, -d**: Activate debugging mode. Sets verbosity to level 4 and presets rowsize = 3, columnsize = 4, scale = 1000.
 
-###### Tasks
+## Tasks
 - [x] Implement performance benchmarks in Python with datafiles
 - [x] Implement performance benchmarks in Python with iterations
 - [x] Implement constructors that pass numpy arrays by reference
@@ -54,9 +54,9 @@ The Matrix module can then be used by importing **Matrix**.
 ## Testing for Python vs C++ performance
 To test how the perfomance of a **numpy** array compares with the matrix constructed from the user-defined Matrix class in C++, run **python test/test_matrix.py**. This allows the user to test the performance for the Matrix class vs numpy arrays with row and column dimensions from user input, as well as the scaling factor for larger matrices. The constructed numpy array / datafile will have random values from 0-1 as elements with the provided shape. 
 Available flags:
-- **--verbosity, -v**: Set verbosity level (integer from 0-4). Default is 0. 
-- **--mode, -m**: Set whether to benchmark performance from a datafile, a numpy array, or both (inputs: datafile, np_array, or both). Default is both.
-- **--debug, -d**: Activate debugging mode. Sets verbosity to level 4 and presets rowsize = 3, columnsize = 4, scale = 1000.
+- **-v, --verbosity**: Set verbosity level (integer from 0-4). Default is 0. 
+- **-m, --mode**: Set whether to benchmark performance from a datafile, a numpy array, or both (inputs: datafile, np_array, or both). Default is both.
+- **-d, --debug**: Activate debugging mode. Sets verbosity to level 4 and presets rowsize = 3, columnsize = 4, scale = 1000.
 
 ## Testing the performance of Boost C++ matrices vs user-defined matrices 
 To compare between matrices constructed from the **uBLAS** library from **Boost** and the user-defined Matrix class, perform the following steps:
