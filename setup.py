@@ -26,7 +26,7 @@ class get_pybind_include(object):
 ext_module = [
     Extension(
         'funcs',
-        sources=["cpptasks/src/funcs.cc", "cpptasks/src/funcs_wrapper.cc"],
+        sources=["lib/src/funcs.cc", "lib/src/funcs_wrapper.cc"],
         depends=[],
         language='c++',
         include_dirs=[
@@ -35,22 +35,22 @@ ext_module = [
     ),
     Extension(
         'Matrix',
-        sources=["cpptasks/src/Matrix.cc", "cpptasks/src/Matrix_wrapper.cc"],
+        sources=["lib/src/Matrix.cc", "lib/src/Matrix_wrapper.cc"],
         depends=[],
         language='c++',
         include_dirs=[
             get_pybind_include(),
-            'cpptasks/include'
+            'lib/include'
         ],
     ),
     Extension(
         'BoostMatrix',
-        sources=["cpptasks/src/BoostMatrix.cc", "cpptasks/src/BoostMatrix_wrapper.cc"],
+        sources=["lib/src/BoostMatrix.cc", "lib/src/BoostMatrix_wrapper.cc"],
         depends=[],
         language='c++',
         include_dirs=[
             get_pybind_include(),
-            'cpptasks/include'
+            'lib/include'
         ],
     )
 ]
