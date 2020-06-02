@@ -52,9 +52,9 @@ The Matrix module can then be used by importing **Matrix**.
 ## Testing for Python vs C++ performance
 To test how the perfomance of a **numpy** array compares with the matrix constructed from the user-defined Matrix class in C++, run **python test/test_matrix.py**. This allows the user to test the performance for the Matrix class vs numpy arrays with row and column dimensions from user input, as well as the scaling factor for larger matrices. The constructed numpy array / datafile will have random values from 0-1 as elements with the provided shape. 
 Available flags:
-- **--verbosity, -v**: Set verbosity level (integer from 0-4). Default is 0. 
-- **--mode, -m**: Set whether to benchmark performance from a datafile, a numpy array, or both (inputs: datafile, np_array, or both). Default is both.
-- **--debug, -d**: Activate debugging mode. Sets verbosity to level 4 and presets rowsize = 3, columnsize = 4, scale = 1000.
+- **-v, --verbosity**: Set verbosity level (integer from 0-4). Default is 0. 
+- **-m, --mode**: Set whether to benchmark performance from a datafile, a numpy array, or both (inputs: datafile, np_array, or both). Default is both.
+- **-d, --debug**: Activate debugging mode. Sets verbosity to level 4 and presets rowsize = 3, columnsize = 4, scale = 1000.
 
 ## Testing the performance of Boost C++ matrices vs user-defined matrices 
 To compare between matrices constructed from the **uBLAS** library from **Boost** and the user-defined Matrix class, perform the following steps:
