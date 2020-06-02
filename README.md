@@ -1,19 +1,46 @@
 # cpptasks
-Performance benchmark for C++ and Python using a Matrix class
+This project compares the performance between a built-in array, an external C++ library, and Python (numpy) by evaluating the norm from matrices constructed using C-arrays, the uBLAS library from Boost, and a numpy array. 
 
 ###### Notes for Window command prompt users
 - All python commands (ex. **python setup.py build_ext**) should be replaced with **py** instead. 
 - A **.exe** extension should be applied instead of a **.o** extension for object codes.
 
 ## Requirements
-- Python3 or above
+- Python3 or above 
+- **pip** (if Python version is <=3.4)
 - numpy and matplotlib modules in Python
 - C++11 or above
 - uBLAS library in Boost
 - A C++ compiler (g++, CLANG++, or Microsoft C++ compiler)
 - pybind11 
 
-## Installation of user-defined module
+## Installation
+The module containing the relavent classes can be installed in the following ways:
+1. using **pip**: **pip install .**
+2. using **python**: **python setup.py build_ext**, then **python setup.py install**
+The modules for the user-defined Matrix class (matrices created from C-arrays) can be imported with **Matrix**. The module for matrices constructed from Boost can be imported with **BoostMatrix**.
+- If a different C++ compiler is being used, make sure to change the compiler configurations (**os.environ["CC"]**) in the top of the file **setup.py**.
+- If you do not have **pybind11** installed, install from **pip** by using the following command: **pip install pybind11**.
+- If you do not have **Boost** installed, install it from [here] (https://www.boost.org/doc/libs/1_73_0/more/getting_started/windows.html).
+
+## Testing for performance
+Performance test can be run by **python tests/test_matrix.py**. This compares the performance for a small and large matrix. The rows and columns of the smaller matrix, as well as the scaling factor of the smaller vs larger matrix, is set by user input. The constructed numpy array / datafile will have random values from 0-1 as elements with the provided shape. 
+Available flags:
+- **--verbosity, -v**: Set verbosity level (integer from 0-4). Default is 0. 
+- **--mode, -m**: Set whether to benchmark performance from a datafile, a numpy array, or both (inputs: datafile, np_array, or both). Default is both.
+- **--debug, -d**: Activate debugging mode. Sets verbosity to level 4 and presets rowsize = 3, columnsize = 4, scale = 1000.
+
+###### Tasks
+- [x] Implement performance benchmarks with iterations
+- [x] Implement constructors that pass numpy arrays by reference
+- [x] Integrate Boost performance test with numpy array tests
+- [ ] Fix slow performance for C++ matrices 
+- [ ] Clean up code
+
+
+
+
+<!-- ## Installation of user-defined module
 The C++ library containing the user-defined Matrix class can simply be installed by using the usual **pip** command: **pip install .**  .  Alternatively, the package can be built by using the Python command: **python setup.py build_ext**, followed by installing the package with **python setup.py install**. 
 - If a different C++ compiler is being used, make sure to change the compiler configurations (**os.environ["CC"]**) in the top of the file **setup.py**.
 - If you do not have **pybind11** installed, install from **pip** by using the following command: **pip install pybind11**.
@@ -24,7 +51,7 @@ To test how the perfomance of a **numpy** array compares with the matrix constru
 Available flags:
 - **--verbosity, -v**: Set verbosity level (integer from 0-4). Default is 0. 
 - **--mode, -m**: Set whether to benchmark performance from a datafile, a numpy array, or both (inputs: datafile, np_array, or both). Default is both.
-- **--debug, -d**: Activate debugging mode (Boolean). Sets verbosity to level 3 and presets rowsize = 3, columnsize = 4, scale = 1000.
+- **--debug, -d**: Activate debugging mode. Sets verbosity to level 4 and presets rowsize = 3, columnsize = 4, scale = 1000.
 
 ## Testing the performance of Boost C++ matrices vs user-defined matrices 
 To compare between matrices constructed from the **uBLAS** library from **Boost** and the user-defined Matrix class, perform the following steps:
@@ -32,4 +59,4 @@ To compare between matrices constructed from the **uBLAS** library from **Boost*
   2. Compile the source code from the project directory. The command used will differ depending on your compiler. 
      - If you are using the Microsoft C++ compiler from command line, run the following command: **cl.exe /EHsc /Fe"tests\test_matrix.exe" /I cpptasks\include /I \path\to\boost tests\test_matrix.cc cpptasks\src\Matrix.cc** (replace **path\to\boost** to your path to the directory in which boost is installed).
      - If you are using a Unix system with terminal (either a g++ or CLANG++ compiler), run the following command: **g++ -o tests/test_matrix.o -I cpptasks/include tests/test_matrix.cc cpptasks/src/Matrix.cc**. For CLANG++, replace **g++** with **clang++**.
-  3. Run the executable from the project directory.
+  3. Run the executable from the project directory. -->
