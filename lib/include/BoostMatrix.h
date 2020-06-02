@@ -2,6 +2,7 @@
 #define __BOOSTMATRIX_H__
 
 #include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/matrix_expression.hpp>
 
 using namespace boost::numeric;
 
@@ -36,14 +37,15 @@ public:
 
     // operations
     bool dim_equal(const BoostMatrix &); // check if dimensions are equal
-    double inner_prod(const BoostMatrix & bmat) { return inner_prod(b, bmat.b)};
-    double norm() { return norm_frobenius(b); }; //Frobenius norm
+    // double inner_prod(const BoostMatrix & bmat) { return ublas::inner_prod(b, bmat.b); }
+    double norm() { return norm_frobenius(b); } //Frobenius norm
+    const std::pair<double, double> norm_performance(const int);  // evaluate performance through c++
     // utility functions
     void print_mat();          // print BoostMatrix
     void print_row(const int); // auxiliary function for print_mat() to print each row
     // BoostMatrix import_data(const int&, const int&, const std::string&);  // import data (knowing data dimensions)
     // destructor
-    ~BoostMatrix() {b.clear()}
+    ~BoostMatrix() {b.clear();}
 };
 
 #endif //__BOOSTMATRIX_H__

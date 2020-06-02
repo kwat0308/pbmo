@@ -84,19 +84,26 @@ def test_performance(arr, cpp_mat, boost_mat, args):
     np_avgtime = np.mean(np_timearr)
     boost_avgtime = np.mean(boost_timearr)
 
+    # get results from evaluating performance from c++ 
+    # i.e. for loop within c++
+    cpp_results_cpp = cpp_mat.norm_performance(max_iter)
+    boost_results_cpp = boost_mat.norm_performance(max_iter)
+
     # print performance results
-    print_results(cpp_avgnorm, np_avgnorm, boost_avgnorm, cpp_avgtime, np_avgtime, boost_avgtime, dim, max_iter)
+    print_results(cpp_avgnorm, np_avgnorm, boost_avgnorm, cpp_results_cpp, boost_results_cpp, cpp_avgtime, np_avgtime, boost_avgtime, dim, max_iter)
 
 
 # print results of our performance benchmarks
-def print_results(cpp_norm, np_norm, b_norm, cpp_time, np_time, b_time, dim, max_iter):
+def print_results(cpp_norm, np_norm, b_norm, cppresults_cpp, bresults_cpp, cpp_time, np_time, b_time, dim, max_iter):
     print("Results for performance benchmarking for {0}-by-{1} matrix:\n".format(*dim),
     "Number of iterations for performance benchmark: {0}\n".format(max_iter),
     "Average norm evaluated from user-defined class: {0},\nAverage norm evaluated from numpy: {1},\nAverage norm evaluated from Boost: {2}\n".format(cpp_norm, np_norm, b_norm),
     "Average time taken for evaluation of norm from user-defined class: {0} s\n".format(cpp_time),
     "Average time taken for evaluation of norm from numpy: {0} s\n".format(np_time),
     "Average time taken for evaluation of norm from Boost: {0} s\n".format(b_time),
-    "Comparisons:\n",
+    "Performance from evaluating from C++ (user-defined matrix): value: {0}, time: {1}\n".format(*cppresults_cpp),
+    "Performance from evaluating from C++ (user-defined matrix): value: {0}, time: {1}\n".format(*bresults_cpp),
+    "\nComparisons:\n",
     "Accuracy of user-defined norm vs numpy norm: {0}\n".format(np.abs(np_norm - cpp_norm)),
     "Accuracy of user-defined norm vs Boost norm: {0}\n".format(np.abs(cpp_norm - b_norm)),
     "Accuracy of numpy norm vs Boost norm: {0}\n".format(np.abs(np_norm - b_norm)),
@@ -211,7 +218,7 @@ def main():
     if args.debug_mode:
         rs = 3
         cs = 4
-        scale = 1000  # set scaling factor by 1000 for large matrices
+        scale = 50  # set scaling factor by 50 for large matrices
         args.verbosity = 4 
     else:
         rs = int(input("Please enter dimension for rows for matrix: "))

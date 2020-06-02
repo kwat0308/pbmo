@@ -21,6 +21,7 @@ PYBIND11_MODULE(BoostMatrix, M)
         .def_property_readonly("dim", &BoostMatrix::dim)
         // .def("dim_equal", &BoostMatrix::dim_equal)
         // .def("inner_prod", &BoostMatrix::inner_prod)
+        .def("norm_performance", &BoostMatrix::norm_performance)
         .def("norm", &BoostMatrix::norm)
         .def("print_mat", &BoostMatrix::print_mat);
 }

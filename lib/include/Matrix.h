@@ -40,6 +40,7 @@ public:
     bool dim_equal(const Matrix &); // check if dimensions are equal
     double inner_prod(const Matrix &);
     double norm(); //Frobenius norm (standard matrix norm)
+    const std::pair<double, double> norm_performance(const int);  // evaluate performance through c++
     // utility functions
     void print_mat();          // print matrix
     void print_row(const int); // auxiliary function for print_mat() to print each row

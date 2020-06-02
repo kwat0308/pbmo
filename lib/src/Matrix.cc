@@ -33,6 +33,7 @@ With this, we can compare our Matrix class to:
 #include <pybind11/numpy.h>
 #include <math.h>
 #include <stdexcept>
+#include <time.h>
 // #include <numeric>
 
 #include "Matrix.h" // header file
@@ -266,6 +267,38 @@ double Matrix::norm()
     }
 
     return sqrt(norm);
+}
+
+// obtain performance of norm by performing max_iter number of 
+// evaluations of norm 
+// returns pair of average norm and average time
+const std::pair<double, double> Matrix::norm_performance(const int max_iter)
+{
+    double avgnorm, avgtime;
+    clock_t t;
+
+    int i=0;
+    while (i<max_iter) 
+    {
+        // evaluate norm with timer
+        t = clock();
+        double norm_i = norm();
+        t = clock() - t;
+        // append to avgnorm and avgtime
+        avgnorm += norm_i;
+        avgtime += (double) t;
+        ++i;
+    }
+
+    // divide by ticks / second
+    avgtime /= (CLOCKS_PER_SEC);
+
+    // get average value
+    avgnorm /= max_iter;
+    avgtime /= max_iter;
+
+    return std::pair<double, double> (avgnorm, avgtime);
+
 }
 
 // print matrix

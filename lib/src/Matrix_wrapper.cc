@@ -22,6 +22,7 @@ PYBIND11_MODULE(Matrix, M)
         .def("dim_equal", &Matrix::dim_equal)
         .def("inner_prod", &Matrix::inner_prod)
         .def("norm", &Matrix::norm)
+        .def("norm_performance", &Matrix::norm_performance)
         .def("print_mat", &Matrix::print_mat);
 }
 
