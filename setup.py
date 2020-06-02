@@ -7,9 +7,9 @@ from setuptools import setup, Extension, find_packages
 
 local_path = os.path.dirname(os.path.abspath(__file__))
 # change compiler
-# os.environ["CC"] = "clang++"
+os.environ["CC"] = "clang++"
 # os.environ["CC"] = "g++"
-os.environ["CC"] = "cl"
+# os.environ["CC"] = "cl"
 
 
 # obtained from: https://github.com/pybind/python_example/blob/master/setup.py
@@ -42,12 +42,22 @@ ext_module = [
             get_pybind_include(),
             'cpptasks/include'
         ],
+    ),
+    Extension(
+        'BoostMatrix',
+        sources=["cpptasks/src/BoostMatrix.cc", "cpptasks/src/BoostMatrix_wrapper.cc"],
+        depends=[],
+        language='c++',
+        include_dirs=[
+            get_pybind_include(),
+            'cpptasks/include'
+        ],
     )
 ]
 
 setup(
     name='myModule',
-    version=1.0,
+    version='1.1.0',
     description=
     'Example module that contains some basic functions and a matrix class.',
     packages=find_packages(exclude='tests'),
@@ -64,7 +74,7 @@ setup(
         'Programming Language :: C++',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
         'Natural Language :: English',
     ],

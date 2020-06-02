@@ -6,7 +6,7 @@ import argparse
 
 import time  # for measuring performance
 import numpy as np
-import Matrix
+import Matrix, BoostMatrix
 
 # sys.path.append("./data")
 
@@ -21,7 +21,7 @@ def make_data(rs, cs, size):
                delimiter="\t")
 
 # test the performance of the evaluation of C++ and numpy norm
-def test_performance(arr, cpp_mat, args):
+def test_performance(arr, cpp_mat, boost_mat, args):
     max_iter = 10000    # number of iterations for evaluation of norm
     dim = arr.shape
 
@@ -29,13 +29,15 @@ def test_performance(arr, cpp_mat, args):
 
     cpp_normarr = np.zeros(max_iter)
     np_normarr = np.zeros(max_iter)
+    boost_normarr = np.zeros(max_iter)
 
     cpp_timearr = np.zeros(max_iter)
     np_timearr = np.zeros(max_iter)
+    boost_timearr = np.zeros(max_iter)
     
     i=0
     while (i <= max_iter):
-        #C++ norm
+        #user-defined norm
         cpp_norm_t0 = time.time()
         cpp_norm = cpp_mat.norm()
         cpp_norm_t1 = time.time()
@@ -43,49 +45,64 @@ def test_performance(arr, cpp_mat, args):
         np_norm_t0 = time.time()
         np_norm = np.linalg.norm(arr)
         np_norm_t1 = time.time()
+        # boost norm
+        boost_norm_t0 = time.time()
+        boost_norm = boost_mat.norm()
+        boost_norm_t1 = time.time()
 
         # progression status message for each tenth of the loop
         if i%(max_iter//10) == 0:
             print("Progression status: {0} iterations completed.\n".format(i))
             if args.verbosity > 3:
                 print("Results for {0}th iteration:\n".format(i))
-                print("Norm values: C++: {0}, numpy: {1}".format(cpp_norm, np_norm))
-                print("Time for C++ matrix norm ({0}-by-{1} matrix): {2}s".format(
+                print("Norm values: user-defined: {0}, numpy: {1}, boost: {2}".format(cpp_norm, np_norm, boost_norm))
+                print("Time for user-defined matrix norm ({0}-by-{1} matrix): {2}s".format(
                     dim[0], dim[1], cpp_norm_t1 - cpp_norm_t0))
-                print("Time for numpy matrix norm ({0}-by-{1} matrix): {2}s\n".format(
+                print("Time for numpy matrix norm ({0}-by-{1} matrix): {2}s".format(
                     dim[0], dim[1], np_norm_t1 - np_norm_t0))
+                print("Time for boost norm ({0}-by-{1} matrix): {2}s\n".format(
+                    dim[0], dim[1], boost_norm_t1 - boost_norm_t0))
 
         # only append after first iteration
         if i > 0:
             cpp_normarr[i-1] = cpp_norm
             np_normarr[i-1] = np_norm
+            boost_normarr[i-1] = boost_norm
 
             cpp_timearr[i-1] = cpp_norm_t1 - cpp_norm_t0
             np_timearr[i-1] = np_norm_t1 - np_norm_t0
+            boost_timearr[i-1] = boost_norm_t1 - boost_norm_t0
 
         i+=1  # increment
     
     # get the average values of the norm and times
     cpp_avgnorm = np.mean(cpp_normarr)
     np_avgnorm = np.mean(np_normarr)
+    boost_avgnorm = np.mean(boost_normarr)
 
     cpp_avgtime = np.mean(cpp_timearr)
     np_avgtime = np.mean(np_timearr)
+    boost_avgtime = np.mean(boost_timearr)
 
     # print performance results
-    print_results(cpp_avgnorm, np_avgnorm, cpp_avgtime, np_avgtime, dim, max_iter)
+    print_results(cpp_avgnorm, np_avgnorm, boost_avgnorm, cpp_avgtime, np_avgtime, boost_avgtime, dim, max_iter)
 
 
 # print results of our performance benchmarks
-def print_results(cpp_norm, np_norm, cpp_time, np_time, dim, max_iter):
+def print_results(cpp_norm, np_norm, b_norm, cpp_time, np_time, b_time, dim, max_iter):
     print("Results for performance benchmarking for {0}-by-{1} matrix:\n".format(*dim),
     "Number of iterations for performance benchmark: {0}\n".format(max_iter),
-    "Average norm evaluated from C++: {0}, \t Average norm evaluated from numpy: {1}\n".format(cpp_norm, np_norm),
-    "Average time taken for evaluation of norm from C++: {0} s\n".format(cpp_time),
+    "Average norm evaluated from user-defined class: {0},\nAverage norm evaluated from numpy: {1},\nAverage norm evaluated from Boost: {2}\n".format(cpp_norm, np_norm, b_norm),
+    "Average time taken for evaluation of norm from user-defined class: {0} s\n".format(cpp_time),
     "Average time taken for evaluation of norm from numpy: {0} s\n".format(np_time),
+    "Average time taken for evaluation of norm from Boost: {0} s\n".format(b_time),
     "Comparisons:\n",
-    "Accuracy of C++ norm vs numpy norm: {0}\n".format(np.abs(np_norm - cpp_norm)),
-    "Ratio of C++ performance to numpy performance: {0}".format(cpp_time / np_time)
+    "Accuracy of user-defined norm vs numpy norm: {0}\n".format(np.abs(np_norm - cpp_norm)),
+    "Accuracy of user-defined norm vs Boost norm: {0}\n".format(np.abs(cpp_norm - b_norm)),
+    "Accuracy of numpy norm vs Boost norm: {0}\n".format(np.abs(np_norm - b_norm)),
+    "Ratio of user-defined matrix performance to numpy performance: {0}\n".format(cpp_time / np_time),
+    "Ratio of user-defined matrix performance to Boost performance: {0}\n".format(cpp_time / b_time),
+    "Ratio of numpy performance to Boost performance: {0}\n".format(np_time / b_time)
     )
 
 
@@ -106,15 +123,25 @@ def test_with_nparray(rs, cs, scale, args):
         cpp_mat = Matrix.Matrix(arr)
         cpp_mat_t1 = time.time()
 
+        # first initialize the matrix in C++
+        boost_mat_t0 = time.time()
+        # boost_mat = Matrix.Matrix(arr.shape[0], arr.shape[1],
+        #                         arr)
+        boost_mat = BoostMatrix.BoostMatrix(arr)
+        boost_mat_t1 = time.time()
+
         if args.verbosity > 0:
             cpp_mat.print_mat()  # print c++ matrix
             print(arr)   # print numpy matrix
+            boost_mat.print_mat()  # print boost matrix
         if args.verbosity > 1:
-            print("Time for creating C++ matrix ({0}-by-{1}): {2}s\n".format(
+            print("Time for creating user-defined matrix ({0}-by-{1}): {2}s\n".format(
                 cpp_mat.rows, cpp_mat.cols, cpp_mat_t1 - cpp_mat_t0))   # print time of initialization
+            print("Time for creating Boost matrix ({0}-by-{1}): {2}s\n".format(
+                boost_mat.rows, boost_mat.cols, boost_mat_t1 - boost_mat_t0))   # print time of initialization
 
         # now just test performance for evaluation of norm
-        test_performance(arr, cpp_mat, args)
+        test_performance(arr, cpp_mat, boost_mat, args)
 
 
 
@@ -142,16 +169,25 @@ def test_with_datafile(rs, cs, scale, args):
         np_mat = np.loadtxt("data/{0}_data.tsv".format(size), delimiter="\t")
         np_mat_t1 = time.time()
 
+        # also initialize Boost matrix
+        boost_mat_t0 = time.time()
+        boost_mat = BoostMatrix.BoostMatrix(rs, cs,
+                                "data/{0}_data.tsv".format(size)) 
+        boost_mat_t1 = time.time()
+
         if args.verbosity > 1:
             cpp_mat.print_mat()  # print c++ matrix
-            print(np_mat)   # print numpy matrix
+            print(np_mat, '\n')   # print numpy matrix
+            boost_mat.print_mat()  # print boost matrix
         if args.verbosity > 0:
-            print("Time for creating C++ matrix ({0}-by-{1}): {2}s\n".format(
+            print("Time for creating user-defined matrix ({0}-by-{1}): {2}s\n".format(
                 cpp_mat.rows, cpp_mat.cols, cpp_mat_t1 - cpp_mat_t0))   # print time of initialization
             print("Time for creating numpy matrix ({0}-by-{1}): {2}s\n".format(
                 np_mat.shape[0], np_mat.shape[1], np_mat_t1 - np_mat_t0))   # print time of initialization
+            print("Time for creating Bopst matrix ({0}-by-{1}): {2}s\n".format(
+            boost_mat.rows, boost_mat.cols, boost_mat_t1 - boost_mat_t0))   # print time of initialization
 
-        test_performance(np_mat, cpp_mat, args)
+        test_performance(np_mat, cpp_mat, boost_mat, args)
         
 
 
