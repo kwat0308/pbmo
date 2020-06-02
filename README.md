@@ -20,7 +20,7 @@ The module containing the relavent classes can be installed in the following way
 2. using **python**: **python setup.py build_ext**, then **python setup.py install**
 The modules for the user-defined Matrix class (matrices created from C-arrays) can be imported with **Matrix**. The module for matrices constructed from Boost can be imported with **BoostMatrix**.
 - If a different C++ compiler is being used, make sure to change the compiler configurations (**os.environ["CC"]**) in the top of the file **setup.py**.
-- If you do not have **pybind11** installed, install from **pip** by using the following command: **pip install pybind11**.
+- If you do not have **pybind11** installed, install from **pip** by using the following command: **pip install pybind11**. Alternatively, this can be downloaded using **git clone** from [here] (https://github.com/pybind/pybind11/tree/stable).
 - If you do not have **Boost** installed, install it from [here] (https://www.boost.org/doc/libs/1_73_0/more/getting_started/windows.html).
 
 ## Testing for performance
@@ -31,11 +31,14 @@ Available flags:
 - **--debug, -d**: Activate debugging mode. Sets verbosity to level 4 and presets rowsize = 3, columnsize = 4, scale = 1000.
 
 ###### Tasks
-- [x] Implement performance benchmarks with iterations
+- [x] Implement performance benchmarks in Python with datafiles
+- [x] Implement performance benchmarks in Python with iterations
 - [x] Implement constructors that pass numpy arrays by reference
 - [x] Integrate Boost performance test with numpy array tests
 - [ ] Fix slow performance for C++ matrices 
-- [ ] Clean up code
+- [ ] Add more descriptions for distribution
+- [ ] Implement performance benchmarks in C++
+- [ ] Create a Makefile for performance benchmarks in C++
 
 
 
