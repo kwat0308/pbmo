@@ -35,10 +35,12 @@ Available flags:
 - [x] Implement performance benchmarks in Python with iterations
 - [x] Implement constructors that pass numpy arrays by reference
 - [x] Integrate Boost performance test with numpy array tests
-- [ ] Fix slow performance for C++ matrices 
+- [ ] Create performance plot (dimension vs time)
+- [x] Fix slow performance for C++ matrices 
 - [ ] Add more descriptions for distribution
 - [ ] Implement performance benchmarks in C++
 - [ ] Create a Makefile for performance benchmarks in C++
+- [ ] Clean up code
 
 
 
