@@ -261,7 +261,7 @@ def main():
         dest="debug_mode",
         action="store_true",
         help=
-        "Set program to debug mode (verbosity = 3, use default row / column size of 3, 4)"
+        "Set program to debug mode (verbosity = 4, use default row / column size of 3, 4)"
     )
     # create argument object that contains truth conditions for plot condition or save condition
     args = parser.parse_args()

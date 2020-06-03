@@ -120,7 +120,7 @@ def main():
         dest="debug_mode",
         action="store_true",
         help=
-        "Set program to debug mode (verbosity = 3, use default row / column size of 3, 4)"
+        "Set program to debug mode (verbosity = 4, use max. dimension of 10)"
     )
     # create argument object 
     args = parser.parse_args()
@@ -133,7 +133,7 @@ def main():
     else:
         # max_rs = int(input("Please enter max. dimension for rows for matrix: "))
         # max_cs = int(input("Please enter max. dimension for columns for matrix: "))
-        max_rs = int(input("Please input max dimension for square matrix: "))
+        max_rs = int(input("Please input max dimension for n-by-n square matrix: "))
         max_cs = max_rs
     
     test_from_nparray(max_rs, max_cs, args)
