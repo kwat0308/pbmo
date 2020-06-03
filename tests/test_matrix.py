@@ -90,27 +90,29 @@ def test_performance(arr, cpp_mat, boost_mat, args):
     boost_results_cpp = boost_mat.norm_performance(max_iter)
 
     # print performance results
-    print_results(cpp_avgnorm, np_avgnorm, boost_avgnorm, cpp_results_cpp, boost_results_cpp, cpp_avgtime, np_avgtime, boost_avgtime, dim, max_iter)
+    print_results(cpp_avgnorm, np_avgnorm, boost_avgnorm, cpp_results_cpp, boost_results_cpp, cpp_avgtime, np_avgtime, boost_avgtime, dim, max_iter, args)
 
 
 # print results of our performance benchmarks
-def print_results(cpp_norm, np_norm, b_norm, cppresults_cpp, bresults_cpp, cpp_time, np_time, b_time, dim, max_iter):
+def print_results(cpp_norm, np_norm, b_norm, cppresults_cpp, bresults_cpp, cpp_time, np_time, b_time, dim, max_iter, args):
     print("Results for performance benchmarking for {0}-by-{1} matrix:\n".format(*dim),
-    "Number of iterations for performance benchmark: {0}\n".format(max_iter),
-    "Average norm evaluated from user-defined class: {0},\nAverage norm evaluated from numpy: {1},\nAverage norm evaluated from Boost: {2}\n".format(cpp_norm, np_norm, b_norm),
-    "Average time taken for evaluation of norm from user-defined class: {0} s\n".format(cpp_time),
+    "Number of iterations for performance benchmark: {0}\n".format(max_iter))
+    if args.verbosity > 1:
+        print("Average norm evaluated from user-defined class: {0},\nAverage norm evaluated from numpy: {1},\nAverage norm evaluated from Boost: {2}\n".format(cpp_norm, np_norm, b_norm)),
+    print("Average time taken for evaluation of norm from user-defined class: {0} s\n".format(cpp_time),
     "Average time taken for evaluation of norm from numpy: {0} s\n".format(np_time),
     "Average time taken for evaluation of norm from Boost: {0} s\n".format(b_time),
     "Performance from evaluating from C++ (user-defined matrix): value: {0}, time: {1}\n".format(*cppresults_cpp),
-    "Performance from evaluating from C++ (user-defined matrix): value: {0}, time: {1}\n".format(*bresults_cpp),
-    "\nComparisons:\n",
-    "Accuracy of user-defined norm vs numpy norm: {0}\n".format(np.abs(np_norm - cpp_norm)),
-    "Accuracy of user-defined norm vs Boost norm: {0}\n".format(np.abs(cpp_norm - b_norm)),
-    "Accuracy of numpy norm vs Boost norm: {0}\n".format(np.abs(np_norm - b_norm)),
-    "Ratio of user-defined matrix performance to numpy performance: {0}\n".format(cpp_time / np_time),
-    "Ratio of user-defined matrix performance to Boost performance: {0}\n".format(cpp_time / b_time),
-    "Ratio of numpy performance to Boost performance: {0}\n".format(np_time / b_time)
-    )
+    "Performance from evaluating from C++ (boost matrix): value: {0}, time: {1}\n".format(*bresults_cpp))
+    if args.verbosity > 1:
+        print("\nComparisons:\n",
+        "Accuracy of user-defined norm vs numpy norm: {0}\n".format(np.abs(np_norm - cpp_norm)),
+        "Accuracy of user-defined norm vs Boost norm: {0}\n".format(np.abs(cpp_norm - b_norm)),
+        "Accuracy of numpy norm vs Boost norm: {0}\n".format(np.abs(np_norm - b_norm)),
+        "Ratio of user-defined matrix performance to numpy performance: {0}\n".format(cpp_time / np_time),
+        "Ratio of Boost performance to numpy performance: {0}\n".format(b_time / np_time),
+        "Ratio of user-defined matrix performance to Boost performance: {0}\n".format(cpp_time / b_time)
+        )
 
 
 # test performance benchmark by using a constructed numpy array
@@ -161,9 +163,9 @@ def test_with_datafile(rs, cs, scale, args):
     for (rs, cs, size) in size_config:
         fname = "{0}_data.tsv".format(size)
         fpath = os.path.join(cwd, "data", fname)
-        # create our text files if not created yet
-        if not os.path.isfile(fpath):
-            make_data(rs, cs, size)
+        # clear file contents, then construct new datafile with set dimensions
+        os.remove(fpath)
+        make_data(rs, cs, size)
 
         # initialize C++ matrix
         cpp_mat_t0 = time.time()
