@@ -24,20 +24,26 @@ The modules for the user-defined Matrix class (matrices created from C-arrays) c
 - If you do not have **Boost** installed, install it from [here](https://www.boost.org/doc/libs/1_73_0/more/getting_started/windows.html).
 
 ## Testing for performance
-Performance test can be run by **python tests/test_matrix.py**. This compares the performance for a small and large matrix. The rows and columns of the smaller matrix, as well as the scaling factor of the smaller vs larger matrix, is set by user input. The constructed numpy array / datafile will have random values from 0-1 as elements with the provided shape. 
+
+Performance tests can be run by **python tests/test_from_nparray.py** and **python tests/test_from_datafile.py**, where tests are run by using numpy arrays or constructed data files as valid inputs respectively. The user input requires the maximum matrix dimension (n) for a square matrix. A plot showing the performance as a function of dimension will be displayed. The constructed numpy array / datafile will have random values from 0-1 as elements with the provided shape.
+Available flags:
+- **--verbosity, -v**: Set verbosity level (integer from 0-4). Default is 0. 
+- **--debug, -d**: Activate debugging mode. Sets verbosity to level 4 and presets maximum dimension (n) to 10.
+
+Performance test can also be run by **python tests/test_matrix.py**. This compares the performance for a small and large matrix. The rows and columns of the smaller matrix, as well as the scaling factor of the smaller vs larger matrix, is set by user input. The constructed numpy array / datafile will have random values from 0-1 as elements with the provided shape. 
 Available flags:
 - **--verbosity, -v**: Set verbosity level (integer from 0-4). Default is 0. 
 - **--mode, -m**: Set whether to benchmark performance from a datafile, a numpy array, or both (inputs: datafile, np_array, or both). Default is both.
-- **--debug, -d**: Activate debugging mode. Sets verbosity to level 4 and presets rowsize = 3, columnsize = 4, scale = 1000.
+- **--debug, -d**: Activate debugging mode. Sets verbosity to level 4 and presets rowsize = 3, columnsize = 4, scale = 50.
 
 ## Tasks
 - [x] Implement performance benchmarks in Python with datafiles
 - [x] Implement performance benchmarks in Python with iterations
 - [x] Implement constructors that pass numpy arrays by reference
 - [x] Integrate Boost performance test with numpy array tests
-- [ ] Create performance plot (dimension vs time)
+- [x] Create performance plot (dimension vs time)
 - [x] Fix slow performance for C++ matrices 
-- [ ] Add more descriptions for distribution
+- [ ] Add more descriptions for distribution in setup.py
 - [ ] Implement performance benchmarks in C++
 - [ ] Create a Makefile for performance benchmarks in C++
 - [ ] Clean up code
