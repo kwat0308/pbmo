@@ -108,7 +108,7 @@ def test_from_datafile(max_rs, max_cs, args):
         # j = i - 1
 
     # now get plots
-    plot_results(result_dict, args)
+    plot_results(result_dict, "datafile", args)
 
 
 def main():
@@ -150,7 +150,10 @@ def main():
     else:
         # max_rs = int(input("Please enter max. dimension for rows for matrix: "))
         # max_cs = int(input("Please enter max. dimension for columns for matrix: "))
-        max_rs = int(input("Please input max dimension for n-by-n square matrix: "))
+        # max_rs = int(input("Please input max dimension for n-by-n square matrix: "))
+
+        # inputs are hard to implement for plotting, will be implemented in the future
+        max_rs = 1000
         max_cs = max_rs
     
     test_from_datafile(max_rs, max_cs, args)

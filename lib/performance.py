@@ -129,7 +129,7 @@ def test_performance(arr, cpp_mat, boost_mat, max_iter, args):
 
 
 # plot results of performance benchmarks
-def plot_results(result_dict, args):
+def plot_results(result_dict, mode, args):
     dim_arr = result_dict.pop("Dimension")
     result_arr = list(result_dict.values())
     label_arr = list(result_dict.keys())
@@ -146,7 +146,7 @@ def plot_results(result_dict, args):
     ax.set_title("Performance Benchmark of Square Matrix Norm Evaluation")
     ax.legend(loc='upper left')
 
-    plt.savefig(os.path.join(os.getcwd(), "data", "result_plot.pdf"), dpi=800)
+    plt.savefig(os.path.join(os.getcwd(), "data", "result_plot_{:s}.pdf".format(mode)), dpi=800)
 
     if args.verbosity > 2:
         plt.show()
