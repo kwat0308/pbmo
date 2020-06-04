@@ -66,7 +66,7 @@ def test_from_nparray(max_rs, max_cs, args):
     # currently only integrated with square matrix
     # allowing more arbitrary matrices require more work...
 
-    i = 0
+    # i = 0
     # j = 1
     # max_dim = max_rs*max_cs
     arr_len = 10
@@ -78,7 +78,7 @@ def test_from_nparray(max_rs, max_cs, args):
     result_dict = {"Dimension":np.zeros(arr_len), "C-array (Python)":np.zeros(arr_len), "NumPy (Python)":np.zeros(arr_len),
                 "Boost (Python)":np.zeros(arr_len), "C-array (C++)":np.zeros(arr_len), "Boost (C++)":np.zeros(arr_len)}
 
-    for val in np.arange(10, max_rs, arr_len):
+    for i, val in enumerate(np.linspace(5, max_rs, arr_len, dtype=int)):
         # results containing performance times for norm evaluation
         result_tup = get_results(val, val, args)
         # append to some data structure
@@ -89,7 +89,7 @@ def test_from_nparray(max_rs, max_cs, args):
         result_dict["C-array (C++)"][i] = result_tup[3]
         result_dict["Boost (C++)"][i] = result_tup[4]
         # j = i - 1
-        i += 1
+        
 
     # now get plots
     plot_results(result_dict, "nparray", args)
@@ -128,8 +128,8 @@ def main():
 
     # first ask user for input for row / columns
     if args.debug_mode:
-        max_rs = 10
-        max_cs = 10
+        max_rs = 50
+        max_cs = 50
         args.verbosity = 4
     else:
         # max_rs = int(input("Please enter max. dimension for rows for matrix: "))

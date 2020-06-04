@@ -83,7 +83,7 @@ def test_from_datafile(max_rs, max_cs, args):
     # allowing more arbitrary matrices require more work...
 
     # start from 2x2 matrix (1x1 makes numpy arrays a vector)
-    i = 0
+    # i = 0
     # j = 1
     # max_dim = max_rs*max_cs
     arr_len = 10
@@ -95,17 +95,17 @@ def test_from_datafile(max_rs, max_cs, args):
     result_dict = {"Dimension":np.zeros(arr_len), "C-array (Python)":np.zeros(arr_len), "NumPy (Python)":np.zeros(arr_len),
                 "Boost (Python)":np.zeros(arr_len), "C-array (C++)":np.zeros(arr_len), "Boost (C++)":np.zeros(arr_len)}
 
-    for val in np.arange(10, max_rs, arr_len):
+    for i, val in enumerate(np.linspace(5, max_rs, arr_len, dtype=int)):
         # results containing performance times for norm evaluation
         result_tup = get_results(val, val, args)
         # append to some data structure
-        result_dict["Dimension"][i] = i
+        result_dict["Dimension"][i] = val
         result_dict["C-array (Python)"][i] = result_tup[0]
         result_dict["NumPy (Python)"][i] = result_tup[1]
         result_dict["Boost (Python)"][i] = result_tup[2]
         result_dict["C-array (C++)"][i] = result_tup[3]
         result_dict["Boost (C++)"][i] = result_tup[4]
-        i += 1
+        # i += 1
         # j = i - 1
 
     # now get plots
@@ -145,8 +145,8 @@ def main():
 
     # first ask user for input for row / columns
     if args.debug_mode:
-        max_rs = 10
-        max_cs = 10
+        max_rs = 50
+        max_cs = 50
         args.verbosity = 4
     else:
         # max_rs = int(input("Please enter max. dimension for rows for matrix: "))
