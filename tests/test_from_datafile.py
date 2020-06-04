@@ -2,7 +2,6 @@
 Tests performance of C++ vs numpy vs Boost using data files as input.
 This eliminates unnecessary flags when testing.
 '''
-
 ''' Creates plots that evaluate the performance of norm evaulation with different matrix dimension. This compares:
     - user-defined C++ (pointers)
     - Boost matrix
@@ -25,6 +24,7 @@ sys.path.append(os.path.join(os.getcwd(), "lib"))
 
 from lib.performance import test_performance, plot_results
 
+
 # Test performance benchmarks using data files
 # that are constructed in this function
 def get_results(rs, cs, args):
@@ -33,9 +33,7 @@ def get_results(rs, cs, args):
     if os.path.isfile(fpath):
         os.remove(fpath)
     # construct new datafile with set dimensions
-    np.savetxt(fpath,
-               np.random.rand(rs, cs),
-               delimiter="\t")
+    np.savetxt(fpath, np.random.rand(rs, cs), delimiter="\t")
 
     # initialize C++ matrix
     cpp_mat_t0 = time.time()
@@ -49,8 +47,7 @@ def get_results(rs, cs, args):
 
     # also initialize Boost matrix
     boost_mat_t0 = time.time()
-    boost_mat = BoostMatrix.BoostMatrix(rs, cs,
-                                        "data/test_data.tsv")
+    boost_mat = BoostMatrix.BoostMatrix(rs, cs, "data/test_data.tsv")
     boost_mat_t1 = time.time()
 
     if args.verbosity > 1:
@@ -59,8 +56,8 @@ def get_results(rs, cs, args):
         boost_mat.print_mat()  # print boost matrix
     if args.verbosity > 3:
         print("Time for creating user-defined matrix ({0}-by-{1}): {2}s\n".
-                format(cpp_mat.rows, cpp_mat.cols, cpp_mat_t1 -
-                        cpp_mat_t0))  # print time of initialization
+              format(cpp_mat.rows, cpp_mat.cols,
+                     cpp_mat_t1 - cpp_mat_t0))  # print time of initialization
         print("Time for creating numpy matrix ({0}-by-{1}): {2}s\n".format(
             np_mat.shape[0], np_mat.shape[1],
             np_mat_t1 - np_mat_t0))  # print time of initialization
@@ -92,14 +89,21 @@ def test_from_datafile(max_rs, max_cs, args):
     # naming convention: type_of_array (where performance is tested)
     # result_dict = {"Dimension":np.zeros(max_dim), "C-array (Python)":np.zeros(max_dim), "NumPy (Python)":np.zeros(max_dim),
     #             "Boost (Python)":np.zeros(max_dim), "C-array (C++)":np.zeros(max_dim), "Boost (C++)":np.zeros(max_dim)}
-    result_dict = {"Dimension":np.zeros(arr_len), "C-array (Python)":np.zeros(arr_len), "NumPy (Python)":np.zeros(arr_len),
-                "Boost (Python)":np.zeros(arr_len), "C-array (C++)":np.zeros(arr_len), "Boost (C++)":np.zeros(arr_len)}
+    result_dict = {
+        "Dimension": np.zeros(arr_len),
+        "C-array (Python)": np.zeros(arr_len),
+        "NumPy (Python)": np.zeros(arr_len),
+        "Boost (Python)": np.zeros(arr_len),
+        "C-array (C++)": np.zeros(arr_len),
+        "Boost (C++)": np.zeros(arr_len)
+    }
 
-    for i, val in enumerate(np.linspace(5, max_rs, arr_len, dtype=int)):
+    for i, dim in enumerate(np.linspace(5, max_rs, arr_len, dtype=int)):
+        print("Current Matrix dimension: {0}\n".format(dim))
         # results containing performance times for norm evaluation
-        result_tup = get_results(val, val, args)
+        result_tup = get_results(dim, dim, args)
         # append to some data structure
-        result_dict["Dimension"][i] = val
+        result_dict["Dimension"][i] = dim
         result_dict["C-array (Python)"][i] = result_tup[0]
         result_dict["NumPy (Python)"][i] = result_tup[1]
         result_dict["Boost (Python)"][i] = result_tup[2]
@@ -118,8 +122,7 @@ def main():
     # create an argument parser
     parser = argparse.ArgumentParser(
         description=
-        "Tests performance benchmarks for C++ and Python using data files."
-    )
+        "Tests performance benchmarks for C++ and Python using data files.")
     # add necessary flags
     # set verbosity
     parser.add_argument(
@@ -138,9 +141,8 @@ def main():
         dest="debug_mode",
         action="store_true",
         help=
-        "Set program to debug mode (verbosity = 4, use max. dimension of 10)"
-    )
-    # create argument object 
+        "Set program to debug mode (verbosity = 4, use max. dimension of 10)")
+    # create argument object
     args = parser.parse_args()
 
     # first ask user for input for row / columns
@@ -156,10 +158,8 @@ def main():
         # inputs are hard to implement for plotting, will be implemented in the future
         max_rs = 1000
         max_cs = max_rs
-    
-    test_from_datafile(max_rs, max_cs, args)
-    
 
+    test_from_datafile(max_rs, max_cs, args)
 
 
 main()

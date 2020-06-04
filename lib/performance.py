@@ -46,6 +46,7 @@ def print_results(cpp_norm, np_norm, b_norm, cppresults_cpp, bresults_cpp,
             "Ratio of user-defined matrix performance to Boost performance: {0}\n"
             .format(cpp_time / b_time))
 
+
 # test the performance of the evaluation of C++ and numpy norm
 # returns tuple that contains results
 # should figure out better way to get results in some data structure... (maybe dict?)
@@ -121,11 +122,12 @@ def test_performance(arr, cpp_mat, boost_mat, max_iter, args):
     # print performance results
     if args.verbosity > 0:
         print_results(cpp_avgnorm, np_avgnorm, boost_avgnorm, cpp_results_cpp,
-                    boost_results_cpp, cpp_avgtime, np_avgtime, boost_avgtime,
-                    dim, max_iter, args)
-    
+                      boost_results_cpp, cpp_avgtime, np_avgtime,
+                      boost_avgtime, dim, max_iter, args)
+
     # return tuple of times (no need for actual values)
-    return (cpp_avgtime, np_avgtime, boost_avgtime, cpp_results_cpp[1], boost_results_cpp[1])
+    return (cpp_avgtime, np_avgtime, boost_avgtime, cpp_results_cpp[1],
+            boost_results_cpp[1])
 
 
 # plot results of performance benchmarks
@@ -134,20 +136,24 @@ def plot_results(result_dict, mode, args):
     result_arr = list(result_dict.values())
     label_arr = list(result_dict.keys())
     color_arr = ['b', 'k', 'g', 'c', 'm']
-
-
-    fig, ax = plt.subplots(figsize=(12,9))
+    fig, ax = plt.subplots(figsize=(12, 9))
 
     for i in range(len(label_arr)):
-        ax.plot(dim_arr, result_arr[i], label=label_arr[i], color=color_arr[i], marker='o', ms=3)
-    
+        ax.plot(dim_arr,
+                result_arr[i],
+                label=label_arr[i],
+                color=color_arr[i],
+                marker='o',
+                ms=3)
+
     ax.set_xlabel("Dimension")
     ax.set_ylabel("Evaluation time [s]")
     ax.set_title("Performance Benchmark of Square Matrix Norm Evaluation")
     ax.legend(loc='upper left')
 
-    plt.savefig(os.path.join(os.getcwd(), "data", "result_plot_{:s}.pdf".format(mode)), dpi=800)
+    plt.savefig(os.path.join(os.getcwd(), "data",
+                             "result_plot_{:s}.pdf".format(mode)),
+                dpi=800)
 
     if args.verbosity > 2:
         plt.show()
-    
