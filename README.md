@@ -25,7 +25,7 @@ The modules for the user-defined Matrix class (matrices created from C-arrays) c
 
 ## Testing for performance
 
-Performance tests can be run by **python tests/test_from_nparray.py** and **python tests/test_from_datafile.py**, where tests are run by using numpy arrays or constructed data files as valid inputs respectively. The user input requires the maximum matrix dimension (n) for a square matrix. A plot showing the performance as a function of dimension will be displayed. The constructed numpy array / datafile will have random values from 0-1 as elements with the provided shape.
+Performance tests can be run by **python tests/test_from_nparray.py** and **python tests/test_from_datafile.py**, where tests are run by using numpy arrays or constructed data files as valid inputs respectively. The maximum matrix dimension (n) for a n-by-n matrix is set to 1000. A plot showing the performance as a function of dimension will be displayed. The constructed numpy array / datafile will have random values from 0-1 as elements with the provided shape.
 Available flags:
 - **--verbosity, -v**: Set verbosity level (integer from 0-4). Default is 0. 
 - **--debug, -d**: Activate debugging mode. Sets verbosity to level 4 and presets maximum dimension (n) to 10.
@@ -46,9 +46,14 @@ Available flags:
 - [ ] Add more descriptions for distribution in setup.py
 - [ ] Implement performance benchmarks in C++
 - [ ] Create a Makefile for performance benchmarks in C++
-- [ ] Clean up code
+- [ ] Add uneven matrices for plotting
 
 
+
+<!-- Performance tests can be run by **python tests/test_from_nparray.py** and **python tests/test_from_datafile.py**, where tests are run by using numpy arrays or constructed data files as valid inputs respectively. The user input requires the maximum matrix dimension (n) for a square matrix. A plot showing the performance as a function of dimension will be displayed. The constructed numpy array / datafile will have random values from 0-1 as elements with the provided shape.
+Available flags:
+- **--verbosity, -v**: Set verbosity level (integer from 0-4). Default is 0. 
+- **--debug, -d**: Activate debugging mode. Sets verbosity to level 4 and presets maximum dimension (n) to 10. -->
 
 
 <!-- ## Installation of user-defined module
