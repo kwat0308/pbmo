@@ -83,20 +83,21 @@ def test_from_datafile(max_rs, max_cs, args):
     # allowing more arbitrary matrices require more work...
 
     # start from 2x2 matrix (1x1 makes numpy arrays a vector)
-    i = 2
+    i = 0
     # j = 1
     # max_dim = max_rs*max_cs
+    arr_len = 10
 
     # dictionary that holds results
     # naming convention: type_of_array (where performance is tested)
     # result_dict = {"Dimension":np.zeros(max_dim), "C-array (Python)":np.zeros(max_dim), "NumPy (Python)":np.zeros(max_dim),
     #             "Boost (Python)":np.zeros(max_dim), "C-array (C++)":np.zeros(max_dim), "Boost (C++)":np.zeros(max_dim)}
-    result_dict = {"Dimension":np.zeros(max_rs), "C-array (Python)":np.zeros(max_rs), "NumPy (Python)":np.zeros(max_rs),
-                "Boost (Python)":np.zeros(max_rs), "C-array (C++)":np.zeros(max_rs), "Boost (C++)":np.zeros(max_rs)}
+    result_dict = {"Dimension":np.zeros(arr_len), "C-array (Python)":np.zeros(arr_len), "NumPy (Python)":np.zeros(arr_len),
+                "Boost (Python)":np.zeros(arr_len), "C-array (C++)":np.zeros(arr_len), "Boost (C++)":np.zeros(arr_len)}
 
-    while i < max_rs:
+    for val in np.arange(10, max_rs, arr_len):
         # results containing performance times for norm evaluation
-        result_tup = get_results(i, i, args)
+        result_tup = get_results(val, val, args)
         # append to some data structure
         result_dict["Dimension"][i] = i
         result_dict["C-array (Python)"][i] = result_tup[0]
