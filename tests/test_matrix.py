@@ -178,6 +178,7 @@ def test_with_nparray(rs, cs, scale, args):
         # now just test performance for evaluation of norm
         test_performance(arr, cpp_mat, boost_mat, args)
 
+
 # Test performance benchmarks using data files
 # that are constructed in this function
 def test_with_datafile(rs, cs, scale, args):
@@ -294,7 +295,6 @@ def main():
 
 
 main()
-
 '''
 # from previous main function
 

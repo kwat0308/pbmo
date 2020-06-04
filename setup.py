@@ -8,6 +8,7 @@ from setuptools import setup, Extension, find_packages
 local_path = os.path.dirname(os.path.abspath(__file__))
 # change compiler
 os.environ["CC"] = "clang++"
+
 # os.environ["CC"] = "g++"
 # os.environ["CC"] = "cl"
 
@@ -18,40 +19,32 @@ class get_pybind_include(object):
     The purpose of this class is to postpone importing pybind11
     until it is actually installed, so that the ``get_include()``
     method can be invoked. """
-
     def __str__(self):
         import pybind11
         return pybind11.get_include()
 
+
 ext_module = [
-    Extension(
-        'funcs',
-        sources=["lib/src/funcs.cc", "lib/src/funcs_wrapper.cc"],
-        depends=[],
-        language='c++',
-        include_dirs=[
-            get_pybind_include(),
-        ]
-    ),
+    Extension('funcs',
+              sources=["lib/src/funcs.cc", "lib/src/funcs_wrapper.cc"],
+              depends=[],
+              language='c++',
+              include_dirs=[
+                  get_pybind_include(),
+              ]),
     Extension(
         'Matrix',
         sources=["lib/src/Matrix.cc", "lib/src/Matrix_wrapper.cc"],
         depends=[],
         language='c++',
-        include_dirs=[
-            get_pybind_include(),
-            'lib/include'
-        ],
+        include_dirs=[get_pybind_include(), 'lib/include'],
     ),
     Extension(
         'BoostMatrix',
         sources=["lib/src/BoostMatrix.cc", "lib/src/BoostMatrix_wrapper.cc"],
         depends=[],
         language='c++',
-        include_dirs=[
-            get_pybind_include(),
-            'lib/include'
-        ],
+        include_dirs=[get_pybind_include(), 'lib/include'],
     )
 ]
 
@@ -80,10 +73,8 @@ setup(
     ],
 )
 
-
-
 # extra_compile_args=[    # calls error when run by standard C++ compiler (Windows)
 #     '-std=c++14',   # require C++14 or higher
 #     '-Wno-unused-function',  # do not raise error even when function is unused
-#     '-Wno-write-strings',   
+#     '-Wno-write-strings',
 # ],

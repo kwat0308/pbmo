@@ -159,7 +159,6 @@ BoostMatrix &BoostMatrix::operator=(BoostMatrix &&bmat)
     }
 }
 
-
 // check if two matrices have the same dimensions
 bool BoostMatrix::dim_equal(const BoostMatrix &M)
 {
@@ -167,16 +166,16 @@ bool BoostMatrix::dim_equal(const BoostMatrix &M)
            csz == M.cols();
 }
 
-// obtain performance of norm by performing max_iter number of 
-// evaluations of norm 
+// obtain performance of norm by performing max_iter number of
+// evaluations of norm
 // returns pair of average norm and average time
 const std::pair<double, double> BoostMatrix::norm_performance(const int max_iter)
 {
     double avgnorm, avgtime;
     clock_t t;
 
-    int i=0;
-    while (i<max_iter) 
+    int i = 0;
+    while (i < max_iter)
     {
         // evaluate norm with timer
         t = clock();
@@ -184,7 +183,7 @@ const std::pair<double, double> BoostMatrix::norm_performance(const int max_iter
         t = clock() - t;
         // append to avgnorm and avgtime
         avgnorm += norm_i;
-        avgtime += (double) t;
+        avgtime += (double)t;
         ++i;
     }
 
@@ -195,8 +194,7 @@ const std::pair<double, double> BoostMatrix::norm_performance(const int max_iter
     avgnorm /= max_iter;
     avgtime /= max_iter;
 
-    return std::pair<double, double> (avgnorm, avgtime);
-
+    return std::pair<double, double>(avgnorm, avgtime);
 }
 
 // print BoostMatrix
@@ -255,7 +253,6 @@ void BoostMatrix::print_row(const int i)
 
     std::cout << '}' << std::endl;
 }
-
 
 /*
 

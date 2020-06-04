@@ -8,22 +8,22 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(Matrix, M)
 {
-    // matrix class
-    M.doc() = "Matrix class composed of 2-D arrays.";
-    py::class_<Matrix>(M, "Matrix", py::buffer_protocol())
-        .def(py::init<const int, const int>())
-        .def(py::init<const int, const int, const std::string &>())
-        // .def(py::init<const int, const int, const py::array_t<double>&>())
-        .def(py::init<const py::array_t<double>&>())
-        .def_property("value", &Matrix::get_value, &Matrix::set_value)
-        .def_property_readonly("rows", &Matrix::rows)
-        .def_property_readonly("cols", &Matrix::cols)
-        .def_property_readonly("dim", &Matrix::dim)
-        .def("dim_equal", &Matrix::dim_equal)
-        .def("inner_prod", &Matrix::inner_prod)
-        .def("norm", &Matrix::norm)
-        .def("norm_performance", &Matrix::norm_performance)
-        .def("print_mat", &Matrix::print_mat);
+  // matrix class
+  M.doc() = "Matrix class composed of 2-D arrays.";
+  py::class_<Matrix>(M, "Matrix", py::buffer_protocol())
+      .def(py::init<const int, const int>())
+      .def(py::init<const int, const int, const std::string &>())
+      // .def(py::init<const int, const int, const py::array_t<double>&>())
+      .def(py::init<const py::array_t<double> &>())
+      .def_property("value", &Matrix::get_value, &Matrix::set_value)
+      .def_property_readonly("rows", &Matrix::rows)
+      .def_property_readonly("cols", &Matrix::cols)
+      .def_property_readonly("dim", &Matrix::dim)
+      .def("dim_equal", &Matrix::dim_equal)
+      .def("inner_prod", &Matrix::inner_prod)
+      .def("norm", &Matrix::norm)
+      .def("norm_performance", &Matrix::norm_performance)
+      .def("print_mat", &Matrix::print_mat);
 }
 
 /*
