@@ -116,6 +116,7 @@ def test_performance(arr, cpp_mat, boost_mat, max_iter, args):
 
     # get results from evaluating performance from c++
     # i.e. for loop within c++
+    # returns tuple of (value, time)
     cpp_results_cpp = cpp_mat.norm_performance(max_iter)
     boost_results_cpp = boost_mat.norm_performance(max_iter)
 
