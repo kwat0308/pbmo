@@ -262,7 +262,8 @@ double Matrix::norm()
     {
         for (int j = 0; j < csz; ++j)
         {
-            norm += abs(get_value(i, j) * get_value(i, j));
+            double re = get_value(i,j);
+            norm += re * re;
         }
     }
 
