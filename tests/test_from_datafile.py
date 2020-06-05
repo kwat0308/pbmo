@@ -83,7 +83,7 @@ def test_from_datafile(max_rs, max_cs, args):
     # i = 0
     # j = 1
     # max_dim = max_rs*max_cs
-    arr_len = 10
+    arr_len = 50
 
     # dictionary that holds results
     # naming convention: type_of_array (where performance is tested)
@@ -156,7 +156,7 @@ def main():
         # max_rs = int(input("Please input max dimension for n-by-n square matrix: "))
 
         # inputs are hard to implement for plotting, will be implemented in the future
-        max_rs = 1000
+        max_rs = 500
         max_cs = max_rs
 
     test_from_datafile(max_rs, max_cs, args)
