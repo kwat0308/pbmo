@@ -8,6 +8,11 @@ import time  # for measuring performance
 import numpy as np
 import Matrix, BoostMatrix
 
+sys.path.append(os.getcwd())
+sys.path.append(os.path.join(os.getcwd(), "lib"))
+
+from lib.performance import test_performance
+
 # sys.path.append("./data")
 
 cwd = os.getcwd()  # current working directory
@@ -21,6 +26,168 @@ def make_data(rs, cs, size):
                np.random.rand(rs, cs),
                delimiter="\t")
 
+
+# test performance benchmark by using a constructed numpy array
+# contained of random values
+def test_with_nparray(rs, cs, scale, args):
+    max_iter = 100000
+
+    # now create small / large np array that contains random values
+    small_arr = np.array(np.random.rand(rs, cs), copy=False).astype(np.float64) 
+    large_arr = np.array(np.random.rand(rs * scale, cs * scale), copy=False).astype(np.float64) 
+
+    # now test performance benchmarks for each array
+    for arr in (small_arr, large_arr):
+        # first initialize the matrix in C++
+        cpp_mat_t0 = time.time()
+        # cpp_mat = Matrix.Matrix(arr.shape[0], arr.shape[1],
+        #                         arr)
+        cpp_mat = Matrix.Matrix(arr)
+        cpp_mat_t1 = time.time()
+
+        # first initialize the matrix in C++
+        boost_mat_t0 = time.time()
+        # boost_mat = Matrix.Matrix(arr.shape[0], arr.shape[1],
+        #                         arr)
+        boost_mat = BoostMatrix.BoostMatrix(arr)
+        boost_mat_t1 = time.time()
+
+        if args.verbosity > 0:
+            cpp_mat.print_mat()  # print c++ matrix
+            print(arr)  # print numpy matrix
+            boost_mat.print_mat()  # print boost matrix
+        if args.verbosity > 1:
+            print("Time for creating user-defined matrix ({0}-by-{1}): {2}s\n".
+                  format(cpp_mat.rows, cpp_mat.cols, cpp_mat_t1 -
+                         cpp_mat_t0))  # print time of initialization
+            print("Time for creating Boost matrix ({0}-by-{1}): {2}s\n".format(
+                boost_mat.rows, boost_mat.cols,
+                boost_mat_t1 - boost_mat_t0))  # print time of initialization
+
+        # now just test performance for evaluation of norm
+        test_performance(arr, cpp_mat, boost_mat, max_iter, args)
+
+
+# Test performance benchmarks using data files
+# that are constructed in this function
+def test_with_datafile(rs, cs, scale, args):
+
+    max_iter = 100000
+
+    size_config = [(rs, cs, "small"), (rs * scale, cs * scale, "large")]
+
+    for (rs, cs, size) in size_config:
+        fname = "{0}_data.tsv".format(size)
+        fpath = os.path.join(cwd, "data", fname)
+        # clear file contents, then construct new datafile with set dimensions
+        if os.path.exists(fpath) and os.path.isfile(fpath):
+            os.remove(fpath)
+        make_data(rs, cs, size)
+
+        # initialize C++ matrix
+        cpp_mat_t0 = time.time()
+        cpp_mat = Matrix.Matrix(rs, cs, "data/{0}_data.tsv".format(size))
+        cpp_mat_t1 = time.time()
+
+        # also initialize numpy array
+        np_mat_t0 = time.time()
+        np_mat = np.loadtxt("data/{0}_data.tsv".format(size), delimiter="\t")
+        np_mat_t1 = time.time()
+
+        # also initialize Boost matrix
+        boost_mat_t0 = time.time()
+        boost_mat = BoostMatrix.BoostMatrix(rs, cs,
+                                            "data/{0}_data.tsv".format(size))
+        boost_mat_t1 = time.time()
+
+        if args.verbosity > 1:
+            cpp_mat.print_mat()  # print c++ matrix
+            print(np_mat, '\n')  # print numpy matrix
+            boost_mat.print_mat()  # print boost matrix
+        if args.verbosity > 0:
+            print("Time for creating user-defined matrix ({0}-by-{1}): {2}s\n".
+                  format(cpp_mat.rows, cpp_mat.cols, cpp_mat_t1 -
+                         cpp_mat_t0))  # print time of initialization
+            print("Time for creating numpy matrix ({0}-by-{1}): {2}s\n".format(
+                np_mat.shape[0], np_mat.shape[1],
+                np_mat_t1 - np_mat_t0))  # print time of initialization
+            print("Time for creating Bopst matrix ({0}-by-{1}): {2}s\n".format(
+                boost_mat.rows, boost_mat.cols,
+                boost_mat_t1 - boost_mat_t0))  # print time of initialization
+
+        test_performance(np_mat, cpp_mat, boost_mat, max_iter, args)
+
+
+def main():
+
+    # create arg parser
+    # create an argument parser
+    parser = argparse.ArgumentParser(
+        description=
+        "Tests performance benchmarks for C++ and Python using data files and numpy arrays."
+    )
+    # add necessary flags
+    # choose whether to test performance benchmark with datafile or with numpy arrays or both
+    parser.add_argument(
+        "-m",
+        "--mode",
+        dest="mode",
+        type=str,
+        default="both",
+        help=
+        "Choose test mode (datafile (using datafiles), np_array(using numpy arrays), or both)."
+    )
+    # set verbosity
+    parser.add_argument(
+        "-v",
+        "--verbosity",
+        dest="verbosity",
+        type=int,
+        default=0,
+        help=
+        "Set the level of verbosity for debugging purposes (0 (lowest) to 4 (highest))."
+    )
+    # set debug mode
+    parser.add_argument(
+        "-d",
+        "--debug",
+        dest="debug_mode",
+        action="store_true",
+        help=
+        "Set program to debug mode (verbosity = 4, use default row / column size of 3, 4)"
+    )
+    # create argument object that contains truth conditions for plot condition or save condition
+    args = parser.parse_args()
+    mode = args.mode
+
+    # first ask user for input for row / columns
+    if args.debug_mode:
+        rs = 3
+        cs = 4
+        scale = 50  # set scaling factor by 50 for large matrices
+        args.verbosity = 4
+    else:
+        rs = int(input("Please enter dimension for rows for matrix: "))
+        cs = int(input("Please enter dimension for columns for matrix: "))
+        scale = int(
+            input(
+                "Enter the scaling factor (integer) used for performance test for a large matrix: "
+            ))
+
+    if mode.find("np_array") != -1:
+        test_with_nparray(rs, cs, scale, args)  # test with numpy array
+    elif mode.find("datafile") != -1:
+        test_with_datafile(rs, cs, scale, args)  # test with datafiles
+    elif mode.find("both") != -1:
+        test_with_nparray(rs, cs, scale, args)
+        test_with_datafile(rs, cs, scale, args)
+    else:
+        raise Exception(
+            "Invalid mode type, choose from datafile, np_array, or both.")
+
+
+main()
+'''
 
 # test the performance of the evaluation of C++ and numpy norm
 def test_performance(arr, cpp_mat, boost_mat, args):
@@ -139,164 +306,7 @@ def print_results(cpp_norm, np_norm, b_norm, cppresults_cpp, bresults_cpp,
             .format(cpp_time / b_time))
 
 
-# test performance benchmark by using a constructed numpy array
-# contained of random values
-def test_with_nparray(rs, cs, scale, args):
 
-    # now create small / large np array that contains random values
-    small_arr = np.random.rand(rs, cs)
-    large_arr = np.random.rand(rs * scale, cs * scale)
-
-    # now test performance benchmarks for each array
-    for arr in (small_arr, large_arr):
-        # first initialize the matrix in C++
-        cpp_mat_t0 = time.time()
-        # cpp_mat = Matrix.Matrix(arr.shape[0], arr.shape[1],
-        #                         arr)
-        cpp_mat = Matrix.Matrix(arr)
-        cpp_mat_t1 = time.time()
-
-        # first initialize the matrix in C++
-        boost_mat_t0 = time.time()
-        # boost_mat = Matrix.Matrix(arr.shape[0], arr.shape[1],
-        #                         arr)
-        boost_mat = BoostMatrix.BoostMatrix(arr)
-        boost_mat_t1 = time.time()
-
-        if args.verbosity > 0:
-            cpp_mat.print_mat()  # print c++ matrix
-            print(arr)  # print numpy matrix
-            boost_mat.print_mat()  # print boost matrix
-        if args.verbosity > 1:
-            print("Time for creating user-defined matrix ({0}-by-{1}): {2}s\n".
-                  format(cpp_mat.rows, cpp_mat.cols, cpp_mat_t1 -
-                         cpp_mat_t0))  # print time of initialization
-            print("Time for creating Boost matrix ({0}-by-{1}): {2}s\n".format(
-                boost_mat.rows, boost_mat.cols,
-                boost_mat_t1 - boost_mat_t0))  # print time of initialization
-
-        # now just test performance for evaluation of norm
-        test_performance(arr, cpp_mat, boost_mat, args)
-
-
-# Test performance benchmarks using data files
-# that are constructed in this function
-def test_with_datafile(rs, cs, scale, args):
-
-    size_config = [(rs, cs, "small"), (rs * scale, cs * scale, "large")]
-
-    for (rs, cs, size) in size_config:
-        fname = "{0}_data.tsv".format(size)
-        fpath = os.path.join(cwd, "data", fname)
-        # clear file contents, then construct new datafile with set dimensions
-        if os.path.exists(fpath) and os.path.isfile(fpath):
-            os.remove(fpath)
-        make_data(rs, cs, size)
-
-        # initialize C++ matrix
-        cpp_mat_t0 = time.time()
-        cpp_mat = Matrix.Matrix(rs, cs, "data/{0}_data.tsv".format(size))
-        cpp_mat_t1 = time.time()
-
-        # also initialize numpy array
-        np_mat_t0 = time.time()
-        np_mat = np.loadtxt("data/{0}_data.tsv".format(size), delimiter="\t")
-        np_mat_t1 = time.time()
-
-        # also initialize Boost matrix
-        boost_mat_t0 = time.time()
-        boost_mat = BoostMatrix.BoostMatrix(rs, cs,
-                                            "data/{0}_data.tsv".format(size))
-        boost_mat_t1 = time.time()
-
-        if args.verbosity > 1:
-            cpp_mat.print_mat()  # print c++ matrix
-            print(np_mat, '\n')  # print numpy matrix
-            boost_mat.print_mat()  # print boost matrix
-        if args.verbosity > 0:
-            print("Time for creating user-defined matrix ({0}-by-{1}): {2}s\n".
-                  format(cpp_mat.rows, cpp_mat.cols, cpp_mat_t1 -
-                         cpp_mat_t0))  # print time of initialization
-            print("Time for creating numpy matrix ({0}-by-{1}): {2}s\n".format(
-                np_mat.shape[0], np_mat.shape[1],
-                np_mat_t1 - np_mat_t0))  # print time of initialization
-            print("Time for creating Bopst matrix ({0}-by-{1}): {2}s\n".format(
-                boost_mat.rows, boost_mat.cols,
-                boost_mat_t1 - boost_mat_t0))  # print time of initialization
-
-        test_performance(np_mat, cpp_mat, boost_mat, args)
-
-
-def main():
-
-    # create arg parser
-    # create an argument parser
-    parser = argparse.ArgumentParser(
-        description=
-        "Tests performance benchmarks for C++ and Python using data files and numpy arrays."
-    )
-    # add necessary flags
-    # choose whether to test performance benchmark with datafile or with numpy arrays or both
-    parser.add_argument(
-        "-m",
-        "--mode",
-        dest="mode",
-        type=str,
-        default="both",
-        help=
-        "Choose test mode (datafile (using datafiles), np_array(using numpy arrays), or both)."
-    )
-    # set verbosity
-    parser.add_argument(
-        "-v",
-        "--verbosity",
-        dest="verbosity",
-        type=int,
-        default=0,
-        help=
-        "Set the level of verbosity for debugging purposes (0 (lowest) to 4 (highest))."
-    )
-    # set debug mode
-    parser.add_argument(
-        "-d",
-        "--debug",
-        dest="debug_mode",
-        action="store_true",
-        help=
-        "Set program to debug mode (verbosity = 4, use default row / column size of 3, 4)"
-    )
-    # create argument object that contains truth conditions for plot condition or save condition
-    args = parser.parse_args()
-    mode = args.mode
-
-    # first ask user for input for row / columns
-    if args.debug_mode:
-        rs = 3
-        cs = 4
-        scale = 50  # set scaling factor by 50 for large matrices
-        args.verbosity = 4
-    else:
-        rs = int(input("Please enter dimension for rows for matrix: "))
-        cs = int(input("Please enter dimension for columns for matrix: "))
-        scale = int(
-            input(
-                "Enter the scaling factor (integer) used for performance test for a large matrix: "
-            ))
-
-    if mode.find("np_array") != -1:
-        test_with_nparray(rs, cs, scale, args)  # test with numpy array
-    elif mode.find("datafile") != -1:
-        test_with_datafile(rs, cs, scale, args)  # test with datafiles
-    elif mode.find("both") != -1:
-        test_with_nparray(rs, cs, scale, args)
-        test_with_datafile(rs, cs, scale, args)
-    else:
-        raise Exception(
-            "Invalid mode type, choose from datafile, np_array, or both.")
-
-
-main()
-'''
 # from previous main function
 
     # parameters for small / large files / matrices

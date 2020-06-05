@@ -33,7 +33,9 @@ def get_results(rs, cs, args):
     if os.path.isfile(fpath):
         os.remove(fpath)
     # construct new datafile with set dimensions
-    np.savetxt(fpath, np.random.rand(rs, cs), delimiter="\t")
+    np.savetxt(fpath,
+               np.array(np.random.rand(rs, cs)).astype(np.float64),
+               delimiter="\t")
 
     # initialize C++ matrix
     cpp_mat_t0 = time.time()
@@ -83,7 +85,7 @@ def test_from_datafile(max_rs, max_cs, args):
     # i = 0
     # j = 1
     # max_dim = max_rs*max_cs
-    arr_len = 50
+    arr_len = 10
 
     # dictionary that holds results
     # naming convention: type_of_array (where performance is tested)
@@ -91,6 +93,7 @@ def test_from_datafile(max_rs, max_cs, args):
     #             "Boost (Python)":np.zeros(max_dim), "C-array (C++)":np.zeros(max_dim), "Boost (C++)":np.zeros(max_dim)}
     result_dict = {
         "Dimension": np.zeros(arr_len),
+        "Python (Python)": np.zeros(arr_len),
         "C-array (Python)": np.zeros(arr_len),
         "NumPy (Python)": np.zeros(arr_len),
         "Boost (Python)": np.zeros(arr_len),
@@ -104,11 +107,12 @@ def test_from_datafile(max_rs, max_cs, args):
         result_tup = get_results(dim, dim, args)
         # append to some data structure
         result_dict["Dimension"][i] = dim
-        result_dict["C-array (Python)"][i] = result_tup[0]
-        result_dict["NumPy (Python)"][i] = result_tup[1]
-        result_dict["Boost (Python)"][i] = result_tup[2]
-        result_dict["C-array (C++)"][i] = result_tup[3]
-        result_dict["Boost (C++)"][i] = result_tup[4]
+        result_dict["Python (Python)"][i] = result_tup[0]
+        result_dict["C-array (Python)"][i] = result_tup[1]
+        result_dict["NumPy (Python)"][i] = result_tup[2]
+        result_dict["Boost (Python)"][i] = result_tup[3]
+        result_dict["C-array (C++)"][i] = result_tup[4]
+        result_dict["Boost (C++)"][i] = result_tup[5]
         # i += 1
         # j = i - 1
 
