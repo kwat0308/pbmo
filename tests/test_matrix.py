@@ -189,7 +189,8 @@ def test_with_datafile(rs, cs, scale, args):
         fname = "{0}_data.tsv".format(size)
         fpath = os.path.join(cwd, "data", fname)
         # clear file contents, then construct new datafile with set dimensions
-        os.remove(fpath)
+        if os.path.exists(fpath) and os.path.isfile(fpath):
+            os.remove(fpath)
         make_data(rs, cs, size)
 
         # initialize C++ matrix
