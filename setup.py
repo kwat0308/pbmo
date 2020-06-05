@@ -31,13 +31,15 @@ ext_module = [
               language='c++',
               include_dirs=[
                   get_pybind_include(),
-              ]),
+              ],
+              extra_compile_args=["-O3"]),
     Extension(
         'Matrix',
         sources=["lib/src/Matrix.cc", "lib/src/Matrix_wrapper.cc"],
         depends=[],
         language='c++',
         include_dirs=[get_pybind_include(), 'lib/include'],
+        extra_compile_args=["-O3"]
     ),
     Extension(
         'BoostMatrix',
@@ -45,12 +47,13 @@ ext_module = [
         depends=[],
         language='c++',
         include_dirs=[get_pybind_include(), 'lib/include'],
+        extra_compile_args=["-O3"]
     )
 ]
 
 setup(
     name='myModule',
-    version='1.1.0',
+    version='1.2.0',
     description=
     'Example module that contains some basic functions and a matrix class.',
     packages=find_packages(exclude='tests'),
