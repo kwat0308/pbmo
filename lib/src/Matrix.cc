@@ -330,7 +330,7 @@ void Matrix::print_mat()
     std::cout << '}' << std::endl;
 }
 
-void Matrix::print_row(const int i)
+void Matrix::print_row(const int rownum)
 {
     int cszlim{50}; // column size limit
 
@@ -339,19 +339,19 @@ void Matrix::print_row(const int i)
     { // for large columns print using ... notation
         for (int j = 0; j < 3; ++j)
         {
-            std::cout << get_value(i, j) << ' ';
+            std::cout << get_value(rownum, j) << ' ';
         }
         std::cout << "... ";
         for (int j = 3; j > 0; --j)
         {
-            std::cout << get_value(i, csz - j) << ' ';
+            std::cout << get_value(rownum, csz - j) << ' ';
         }
     }
     else
     { // otherwise print the whole matrix
         for (int j = 0; j < csz; ++j)
         {
-            std::cout << get_value(i, j) << ' ';
+            std::cout << get_value(rownum, j) << ' ';
         }
     }
 

@@ -14,17 +14,17 @@ private:
     ublas::matrix<double> b;
 
 public:
-    BoostMatrix(const unsigned long, const unsigned long);
-    BoostMatrix(const pybind11::array_t<double> &);
-    BoostMatrix(const unsigned long, const unsigned long, const std::string &);
+    BoostMatrix(const unsigned long rs, const unsigned long cs);
+    BoostMatrix(const pybind11::array_t<double> &arr);
+    BoostMatrix(const unsigned long rs, const unsigned long cs, const std::string &fname);
 
     // copy
-    BoostMatrix(const BoostMatrix &);            // copy constructor
-    BoostMatrix &operator=(const BoostMatrix &); //copy assignment
+    BoostMatrix(const BoostMatrix &mat);            // copy constructor
+    BoostMatrix &operator=(const BoostMatrix &mat); //copy assignment
 
     // move
-    BoostMatrix(BoostMatrix &&);            // move constructor
-    BoostMatrix &operator=(BoostMatrix &&); // move assignment
+    BoostMatrix(BoostMatrix &&mat);            // move constructor
+    BoostMatrix &operator=(BoostMatrix &&mat); // move assignment
 
     // // setters
     void set_value(const int i, const int j, const double &newval) { b(i, j) = newval; } // change single value
@@ -36,13 +36,13 @@ public:
     const double get_value(const int i, const int j) const { return b(i, j); }                                              // value at (i,j) coordinate
 
     // operations
-    bool dim_equal(const BoostMatrix &); // check if dimensions are equal
+    bool dim_equal(const BoostMatrix &mat); // check if dimensions are equal
     // double inner_prod(const BoostMatrix & bmat) { return ublas::inner_prod(b, bmat.b); }
     double norm() { return norm_frobenius(b); }                  //Frobenius norm
-    const std::pair<double, double> norm_performance(const int); // evaluate performance through c++
+    const std::pair<double, double> norm_performance(const int max_iter); // evaluate performance through c++
     // utility functions
     void print_mat();          // print BoostMatrix
-    void print_row(const int); // auxiliary function for print_mat() to print each row
+    void print_row(const int rownum); // auxiliary function for print_mat() to print each row
     // BoostMatrix import_data(const int&, const int&, const std::string&);  // import data (knowing data dimensions)
     // destructor
     ~BoostMatrix() { b.clear(); }
