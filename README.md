@@ -1,4 +1,4 @@
-# PBMM - Performance Benchmarks using Matrix Multiplication
+# PBMO - Performance Benchmarks using Matrix Operations
 This project compares the performance between a built-in array, an external C++ library, and Python (numpy) by evaluating the norm from matrices constructed using C-arrays, the uBLAS library from Boost, and a numpy array. 
 
 ###### Notes for Window command prompt users
