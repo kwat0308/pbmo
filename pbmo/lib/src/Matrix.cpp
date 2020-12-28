@@ -24,19 +24,9 @@ With this, we can compare our Matrix class to:
     - numpy array constructed matrices
     - from external libraries like Boost / Eigen
 */
-
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
-#include <math.h>
-#include <stdexcept>
-#include <time.h>
 // #include <numeric>
 
-#include "Matrix.h" // header file
+#include "Matrix.hpp" // header file
 
 // constructor with specified rowsize and columnsize rs, cs
 // default constructor

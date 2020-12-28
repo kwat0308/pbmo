@@ -2,16 +2,7 @@
 either from a numpy array or from some datafile.
 */
 
-#include <boost/numeric/ublas/matrix.hpp>
-// #include <boost/numeric/ublas/io.hpp>
-#include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
-#include "BoostMatrix.h"
+#include "BoostMatrix.hpp"
 
 using namespace boost::numeric;
 

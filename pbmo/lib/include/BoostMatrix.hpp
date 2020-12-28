@@ -3,6 +3,13 @@
 
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_expression.hpp>
+// #include <boost/numeric/ublas/io.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 using namespace boost::numeric;
 

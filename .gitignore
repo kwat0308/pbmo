@@ -1,9 +1,10 @@
 .vscode/
 issues.txt
-build/**
-pbmm.egg-info/**
+build/
+pbmo.egg-info/
 **.pyd 
 **.pyc
 **.exp 
 **.lib 
 **.exe
+**.so
