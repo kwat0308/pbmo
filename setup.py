@@ -2,62 +2,116 @@
 
 import sys
 import os
-
+import platform
 from setuptools import setup, Extension, find_packages
+from setuptools.command.build_ext import build_ext
+from distutils.ccompiler import CCompiler
+from distutils.unixccompiler import UnixCCompiler
+from distutils.msvccompiler import MSVCCompiler
 
 local_path = os.path.dirname(os.path.abspath(__file__))
-# change compiler
-# os.environ["CC"] = "clang++"
+# # change compiler
+# # os.environ["CC"] = "clang++"
 
-# os.environ["CC"] = "g++"
-os.environ["CC"] = "cl"
+# # os.environ["CC"] = "g++"
+# os.environ["CC"] = "cl"
 
-
-# obtained from: https://github.com/pybind/python_example/blob/master/setup.py
-class get_pybind_include(object):
-    """Helper class to determine the pybind11 include path
-    The purpose of this class is to postpone importing pybind11
-    until it is actually installed, so that the ``get_include()``
-    method can be invoked. """
-
-    def __str__(self):
-        import pybind11
-        return pybind11.get_include()
+# Get the path to boost
+# Currently i cant find a workaround to this, we can painstakingly take only
+# header files we need for uBLAS, but this takes time and effort.
+# This also assumes that the Boost directory is in the same directory as the root
+# of this module, which needs to be improved (if it can be)
 
 
-ext_module = [
-    # Extension('funcs',
-    #           sources=["lib/src/funcs.cc", "lib/src/funcs_wrapper.cc"],
-    #           depends=[],
-    #           language='c++',
-    #           include_dirs=[
-    #               get_pybind_include(),
-    #           ],
-    #           extra_compile_args=["-O3"]),
-    Extension(
-        'Matrix',
-        sources=["lib/src/Matrix.cc", "lib/src/Matrix_wrapper.cc"],
-        depends=[],
-        language='c++',
-        include_dirs=[get_pybind_include(), 'lib/include'],
-        # extra_compile_args=["-O3"]
-    ),
-    Extension(
-        'BoostMatrix',
-        sources=["lib/src/BoostMatrix.cc", "lib/src/BoostMatrix_wrapper.cc"],
-        depends=[],
-        language='c++',
-        include_dirs=[get_pybind_include(), 'lib/include', "../boost_1_73_0"],
-        # extra_compile_args=["-O3"]
-    )
-]
+def get_include_boost():
+    '''Return path to where Boost is located'''
+    root_dir = os.path.dirname(local_path)
+    boost_dir = os.path.join(root_dir, "boost_1_73_0")
+    return boost_dir
+
+
+# C/C++ extension of pbmo module
+# contains magnetic field and trajactory evaluation as core of the code
+libpbmo = Extension('pbmo.lib._libpbmo',
+                    sources=[
+                        "pbmo/lib/src/Matrix.cpp",
+                        "pbmo/lib/src/BoostMatrix.cpp",
+                        "pbmo/lib/src/pybind11_wrapper.cpp"
+                    ],
+                    language='c++',
+                    include_dirs=['pbmo/lib/include', 'pbmo/lib/extern', get_include_boost()])
+
+
+'''
+The below settings were obtained from the Iminuit package from scikit-HEP:
+https://github.com/scikit-hep/iminuit 
+'''
+extra_flags = []
+if bool(os.environ.get("COVERAGE", False)):
+    extra_flags += ["--coverage"]
+if platform.system() == "Darwin":
+    extra_flags += ["-stdlib=libc++"]
+
+# turn off warnings raised by Minuit and generated Cython code that need
+# to be fixed in the original code bases of Minuit and Cython
+compiler_opts = {
+    CCompiler: {},
+    UnixCCompiler: {
+        "extra_compile_args": [
+            "-std=c++11",
+            "-Wno-shorten-64-to-32",
+            "-Wno-parentheses",
+            "-Wno-unused-variable",
+            "-Wno-sign-compare",
+            "-Wno-cpp",  # suppresses #warnings from numpy
+            "-Wno-deprecated-declarations",
+        ]
+        + extra_flags,
+        "extra_link_args": extra_flags,
+    },
+    MSVCCompiler: {"extra_compile_args": ["/EHsc"]},
+}
+
+
+class SmartBuildExt(build_ext):
+    def build_extensions(self):
+        c = self.compiler
+        opts = [v for k, v in compiler_opts.items() if isinstance(c, k)]
+        for e in self.extensions:
+            for o in opts:
+                for attrib, value in o.items():
+                    getattr(e, attrib).extend(value)
+
+        build_ext.build_extensions(self)
+
+# Getting the version number at this point is a bit tricky in Python:
+# https://packaging.python.org/en/latest/development.html#single-sourcing-the-version-across-setup-py-and-your-project
+# This is one of the recommended methods that works in Python 2 and 3:
+
+
+def get_version():
+    version = {}
+    with open("pbmo/version.py") as fp:
+        exec(fp.read(), version)
+    return version['__version__']
+
+
+__version__ = get_version()
+
 
 setup(
-    name='pbmm',
-    version='1.2.0',
-    description='Example module that contains some basic functions and a matrix class.',
+    name='pbmo',
+    version=__version__,
+    description='Performance Benchmarking Tool using Matrix Operations',
     packages=find_packages(exclude='tests'),
-    ext_modules=ext_module,
+    author='Keito Watanabe',
+    author_email='k.wat8973@gmail.com',
+    ext_modules=[libpbmo],
+    cmdclass={"build_ext": SmartBuildExt},
+    install_requires=[
+        'numpy',
+        'matplotlib'
+    ],
     classifiers=[
         'Intended Audience :: Science/Research',
         'Intended Audience :: Developers',
@@ -75,9 +129,3 @@ setup(
         'Natural Language :: English',
     ],
 )
-
-# extra_compile_args=[    # calls error when run by standard C++ compiler (Windows)
-#     '-std=c++14',   # require C++14 or higher
-#     '-Wno-unused-function',  # do not raise error even when function is unused
-#     '-Wno-write-strings',
-# ],

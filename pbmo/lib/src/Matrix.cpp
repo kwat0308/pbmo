@@ -26,7 +26,7 @@ With this, we can compare our Matrix class to:
 */
 // #include <numeric>
 
-#include "Matrix.h" // header file
+#include "Matrix.hpp" // header file
 
 // constructor with specified rowsize and columnsize rs, cs
 // default constructor

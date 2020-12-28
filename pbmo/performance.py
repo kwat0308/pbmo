@@ -3,8 +3,7 @@ Python library that contains functions used for performance benchmarking.
 '''
 import os
 import time
-import Matrix
-import BoostMatrix
+from pbmo.lib._libpbmo import Matrix, BoostMatrix
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -113,13 +112,13 @@ def test_performance(arr, cpp_mat, boost_mat, max_iter, args):
                 print(
                     "Norm values: Python: {0}, C++: {1}, numpy: {2}, boost: {3}"
                     .format(py_norm, cpp_norm, np_norm, boost_norm))
-                print("Time for Python matrix norm ({0}-by-{1} matrix): {2}s".
+                print("Time for Python matrix norm ({0}-by-{1} matrix): {2}ns".
                       format(dim[0], dim[1], py_norm_t1 - py_norm_t0))
-                print("Time for C++ matrix norm ({0}-by-{1} matrix): {2}s".
+                print("Time for C++ matrix norm ({0}-by-{1} matrix): {2}ns".
                       format(dim[0], dim[1], cpp_norm_t1 - cpp_norm_t0))
-                print("Time for numpy matrix norm ({0}-by-{1} matrix): {2}s".
+                print("Time for numpy matrix norm ({0}-by-{1} matrix): {2}ns".
                       format(dim[0], dim[1], np_norm_t1 - np_norm_t0))
-                print("Time for boost norm ({0}-by-{1} matrix): {2}s\n".format(
+                print("Time for boost norm ({0}-by-{1} matrix): {2}ns\n".format(
                     dim[0], dim[1], boost_norm_t1 - boost_norm_t0))
 
         # only append after first iteration
