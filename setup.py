@@ -7,10 +7,10 @@ from setuptools import setup, Extension, find_packages
 
 local_path = os.path.dirname(os.path.abspath(__file__))
 # change compiler
-os.environ["CC"] = "clang++"
+# os.environ["CC"] = "clang++"
 
 # os.environ["CC"] = "g++"
-# os.environ["CC"] = "cl"
+os.environ["CC"] = "cl"
 
 
 # obtained from: https://github.com/pybind/python_example/blob/master/setup.py
@@ -19,43 +19,43 @@ class get_pybind_include(object):
     The purpose of this class is to postpone importing pybind11
     until it is actually installed, so that the ``get_include()``
     method can be invoked. """
+
     def __str__(self):
         import pybind11
         return pybind11.get_include()
 
 
 ext_module = [
-    Extension('funcs',
-              sources=["lib/src/funcs.cc", "lib/src/funcs_wrapper.cc"],
-              depends=[],
-              language='c++',
-              include_dirs=[
-                  get_pybind_include(),
-              ],
-              extra_compile_args=["-O3"]),
+    # Extension('funcs',
+    #           sources=["lib/src/funcs.cc", "lib/src/funcs_wrapper.cc"],
+    #           depends=[],
+    #           language='c++',
+    #           include_dirs=[
+    #               get_pybind_include(),
+    #           ],
+    #           extra_compile_args=["-O3"]),
     Extension(
         'Matrix',
         sources=["lib/src/Matrix.cc", "lib/src/Matrix_wrapper.cc"],
         depends=[],
         language='c++',
         include_dirs=[get_pybind_include(), 'lib/include'],
-        extra_compile_args=["-O3"]
+        # extra_compile_args=["-O3"]
     ),
     Extension(
         'BoostMatrix',
         sources=["lib/src/BoostMatrix.cc", "lib/src/BoostMatrix_wrapper.cc"],
         depends=[],
         language='c++',
-        include_dirs=[get_pybind_include(), 'lib/include'],
-        extra_compile_args=["-O3"]
+        include_dirs=[get_pybind_include(), 'lib/include', "../boost_1_73_0"],
+        # extra_compile_args=["-O3"]
     )
 ]
 
 setup(
-    name='myModule',
+    name='pbmm',
     version='1.2.0',
-    description=
-    'Example module that contains some basic functions and a matrix class.',
+    description='Example module that contains some basic functions and a matrix class.',
     packages=find_packages(exclude='tests'),
     ext_modules=ext_module,
     classifiers=[

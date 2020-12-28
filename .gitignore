@@ -1,2 +1,9 @@
 .vscode/
 issues.txt
+build/**
+pbmm.egg-info/**
+**.pyd 
+**.pyc
+**.exp 
+**.lib 
+**.exe
