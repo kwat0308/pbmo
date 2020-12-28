@@ -1,8 +1,10 @@
 '''
 Python library that contains functions used for performance benchmarking.
 '''
-import os, time
-import Matrix, BoostMatrix
+import os
+import time
+import Matrix
+import BoostMatrix
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -87,21 +89,21 @@ def test_performance(arr, cpp_mat, boost_mat, max_iter, args):
     i = 0
     while (i <= max_iter):
         # naive python norm
-        py_norm_t0 = time.time()
+        py_norm_t0 = time.perf_counter_ns()
         py_norm = eval_norm(arr)
-        py_norm_t1 = time.time()
-        #user-defined norm
-        cpp_norm_t0 = time.time()
+        py_norm_t1 = time.perf_counter_ns()
+        # user-defined norm
+        cpp_norm_t0 = time.perf_counter_ns()
         cpp_norm = cpp_mat.norm()
-        cpp_norm_t1 = time.time()
+        cpp_norm_t1 = time.perf_counter_ns()
         # numpy linalg norm
-        np_norm_t0 = time.time()
+        np_norm_t0 = time.perf_counter_ns()
         np_norm = np.linalg.norm(arr)
-        np_norm_t1 = time.time()
+        np_norm_t1 = time.perf_counter_ns()
         # boost norm
-        boost_norm_t0 = time.time()
+        boost_norm_t0 = time.perf_counter_ns()
         boost_norm = boost_mat.norm()
-        boost_norm_t1 = time.time()
+        boost_norm_t1 = time.perf_counter_ns()
 
         # progression status message for each tenth of the loop
         if i % (max_iter // 10) == 0:
@@ -140,10 +142,11 @@ def test_performance(arr, cpp_mat, boost_mat, max_iter, args):
     np_avgnorm = np.mean(np_normarr)
     boost_avgnorm = np.mean(boost_normarr)
 
-    py_avgtime = np.mean(py_timearr)
-    cpp_avgtime = np.mean(cpp_timearr)
-    np_avgtime = np.mean(np_timearr)
-    boost_avgtime = np.mean(boost_timearr)
+    # multiply by 1e-9 to convert ns -> s
+    py_avgtime = np.mean(py_timearr) * (1e-9)
+    cpp_avgtime = np.mean(cpp_timearr) * (1e-9)
+    np_avgtime = np.mean(np_timearr) * (1e-9)
+    boost_avgtime = np.mean(boost_timearr) * (1e-9)
 
     # get results from evaluating performance from c++
     # i.e. for loop within c++
