@@ -2,6 +2,15 @@
 #ifndef __MATRIX_H_
 #define __MATRIX_H_
 
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
+#include <math.h>
+#include <stdexcept>
+#include <time.h>
 class Matrix
 {
 private:
