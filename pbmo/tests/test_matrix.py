@@ -1,14 +1,13 @@
 # This is a test function to test the performance of our compiled Matrix library to numpy arrays
 
-from lib.performance import test_performance
+from pbmo.performance import test_performance
 import sys
 import os
 import argparse
 
 import time  # for measuring performance
 import numpy as np
-import Matrix
-import BoostMatrix
+from pbmo.lib._libpbmo import Matrix, BoostMatrix
 
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(), "lib"))
@@ -44,14 +43,14 @@ def test_with_nparray(rs, cs, scale, args):
         cpp_mat_t0 = time.time()
         # cpp_mat = Matrix.Matrix(arr.shape[0], arr.shape[1],
         #                         arr)
-        cpp_mat = Matrix.Matrix(arr)
+        cpp_mat = Matrix(arr)
         cpp_mat_t1 = time.time()
 
         # first initialize the matrix in C++
         boost_mat_t0 = time.time()
         # boost_mat = Matrix.Matrix(arr.shape[0], arr.shape[1],
         #                         arr)
-        boost_mat = BoostMatrix.BoostMatrix(arr)
+        boost_mat = BoostMatrix(arr)
         boost_mat_t1 = time.time()
 
         if args.verbosity > 0:
@@ -88,7 +87,7 @@ def test_with_datafile(rs, cs, scale, args):
 
         # initialize C++ matrix
         cpp_mat_t0 = time.time()
-        cpp_mat = Matrix.Matrix(rs, cs, "data/{0}_data.tsv".format(size))
+        cpp_mat = Matrix(rs, cs, "data/{0}_data.tsv".format(size))
         cpp_mat_t1 = time.time()
 
         # also initialize numpy array
@@ -98,8 +97,8 @@ def test_with_datafile(rs, cs, scale, args):
 
         # also initialize Boost matrix
         boost_mat_t0 = time.time()
-        boost_mat = BoostMatrix.BoostMatrix(rs, cs,
-                                            "data/{0}_data.tsv".format(size))
+        boost_mat = BoostMatrix(rs, cs,
+                                "data/{0}_data.tsv".format(size))
         boost_mat_t1 = time.time()
 
         if args.verbosity > 1:
