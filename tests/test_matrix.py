@@ -1,17 +1,18 @@
 # This is a test function to test the performance of our compiled Matrix library to numpy arrays
 
+from lib.performance import test_performance
 import sys
 import os
 import argparse
 
 import time  # for measuring performance
 import numpy as np
-import Matrix, BoostMatrix
+import Matrix
+import BoostMatrix
 
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(), "lib"))
 
-from lib.performance import test_performance
 
 # sys.path.append("./data")
 
@@ -21,7 +22,7 @@ cwd = os.getcwd()  # current working directory
 # create a dataset containing of random values and save to a .tsv file
 def make_data(rs, cs, size):
 
-    #small dataset
+    # small dataset
     np.savetxt(os.path.join(cwd, "data", "{0}_data.tsv".format(size)),
                np.random.rand(rs, cs),
                delimiter="\t")
@@ -33,8 +34,9 @@ def test_with_nparray(rs, cs, scale, args):
     max_iter = 100000
 
     # now create small / large np array that contains random values
-    small_arr = np.array(np.random.rand(rs, cs), copy=False).astype(np.float64) 
-    large_arr = np.array(np.random.rand(rs * scale, cs * scale), copy=False).astype(np.float64) 
+    small_arr = np.array(np.random.rand(rs, cs), copy=False).astype(np.float64)
+    large_arr = np.array(np.random.rand(
+        rs * scale, cs * scale), copy=False).astype(np.float64)
 
     # now test performance benchmarks for each array
     for arr in (small_arr, large_arr):
@@ -123,8 +125,7 @@ def main():
     # create arg parser
     # create an argument parser
     parser = argparse.ArgumentParser(
-        description=
-        "Tests performance benchmarks for C++ and Python using data files and numpy arrays."
+        description="Tests performance benchmarks for C++ and Python using data files and numpy arrays."
     )
     # add necessary flags
     # choose whether to test performance benchmark with datafile or with numpy arrays or both
@@ -134,8 +135,7 @@ def main():
         dest="mode",
         type=str,
         default="both",
-        help=
-        "Choose test mode (datafile (using datafiles), np_array(using numpy arrays), or both)."
+        help="Choose test mode (datafile (using datafiles), np_array(using numpy arrays), or both)."
     )
     # set verbosity
     parser.add_argument(
@@ -144,8 +144,7 @@ def main():
         dest="verbosity",
         type=int,
         default=0,
-        help=
-        "Set the level of verbosity for debugging purposes (0 (lowest) to 4 (highest))."
+        help="Set the level of verbosity for debugging purposes (0 (lowest) to 4 (highest))."
     )
     # set debug mode
     parser.add_argument(
@@ -153,8 +152,7 @@ def main():
         "--debug",
         dest="debug_mode",
         action="store_true",
-        help=
-        "Set program to debug mode (verbosity = 4, use default row / column size of 3, 4)"
+        help="Set program to debug mode (verbosity = 4, use default row / column size of 3, 4)"
     )
     # create argument object that contains truth conditions for plot condition or save condition
     args = parser.parse_args()
