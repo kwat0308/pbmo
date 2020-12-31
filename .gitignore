@@ -8,3 +8,5 @@ pbmo.egg-info/**
 **.lib 
 **.exe
 **.so
+**.ipynb_checkpoints
+pbmo_plots

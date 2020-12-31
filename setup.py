@@ -110,7 +110,8 @@ setup(
     cmdclass={"build_ext": SmartBuildExt},
     install_requires=[
         'numpy',
-        'matplotlib'
+        'matplotlib',
+        'tabulate'
     ],
     classifiers=[
         'Intended Audience :: Science/Research',
