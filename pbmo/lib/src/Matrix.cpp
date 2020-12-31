@@ -32,7 +32,7 @@ With this, we can compare our Matrix class to:
 // default constructor
 // initialize a rs x cs matrix (filled with zero value)
 Matrix::Matrix(const int rs, const int cs)
-    : rsz{rs}, csz{cs}, m{new double[rs * cs]}
+    : rsz{rs}, csz{cs}, m{new float[rs * cs]}
 {
     for (int i = 0; i < rsz; ++i)
     {
@@ -46,8 +46,8 @@ Matrix::Matrix(const int rs, const int cs)
 // constructor with specified rowsize and columnsize rs, cs
 // with given data as a 1-d array (2-d array cant be used as parameter unless we know row length)
 // initialize a rs x cs matrix
-Matrix::Matrix(const int rs, const int cs, const double *dp)
-    : rsz{rs}, csz{cs}, m{new double[rs * cs]}
+Matrix::Matrix(const int rs, const int cs, const float *dp)
+    : rsz{rs}, csz{cs}, m{new float[rs * cs]}
 {
     if (sizeof(dp) == sizeof(m)) // if data size == pointer size
     {
@@ -69,7 +69,7 @@ Matrix::Matrix(const int rs, const int cs, const double *dp)
 // where values are obtained from a numpy array
 // we equate the pointers together to pass-by-reference
 // source: https://www.linyuanshi.me/post/pybind11-array/
-Matrix::Matrix(const pybind11::array_t<double> &arr)
+Matrix::Matrix(const pybind11::array_t<float> &arr)
 {
     // request buffer info from numpy array
     pybind11::buffer_info buf = arr.request();
@@ -79,10 +79,10 @@ Matrix::Matrix(const pybind11::array_t<double> &arr)
     csz = buf.shape[1];
 
     // allocate new space in free store for pointer
-    m = new double[rsz * csz];
+    m = new float[rsz * csz];
 
     // set a new pointer ptr to the buffer pointer
-    double *ptr = (double *)buf.ptr;
+    float *ptr = (float *)buf.ptr;
 
     // set pointer to buffer pointer
     for (int i = 0; i < rsz; ++i)
@@ -98,14 +98,14 @@ Matrix::Matrix(const pybind11::array_t<double> &arr)
 // // where values are obtained from a numpy array
 // // we equate the pointers together to pass-by-reference
 // // source: https://www.linyuanshi.me/post/pybind11-array/
-// Matrix::Matrix(const int rs, const int cs, const pybind11::array_t<double>& arr)
-//     :rsz{rs}, csz{cs}, m{new double[rs*cs]}
+// Matrix::Matrix(const int rs, const int cs, const pybind11::array_t<float>& arr)
+//     :rsz{rs}, csz{cs}, m{new float[rs*cs]}
 // {
 //     // request buffer info from numpy array
 //     pybind11::buffer_info buf = arr.request();
 
 //     // now set pointer to pointer of buffer
-//     m = (double*) buf.ptr;
+//     m = (float*) buf.ptr;
 // }
 
 // constructor with specified rowsize and column size rs, cs
@@ -114,7 +114,7 @@ Matrix::Matrix(const pybind11::array_t<double> &arr)
 // and that there are no headers
 // also assume that we know the row and column size of the dataset
 Matrix::Matrix(const int rs, const int cs, const std::string &fname)
-    : rsz{rs}, csz{cs}, m{new double[rs * cs]}
+    : rsz{rs}, csz{cs}, m{new float[rs * cs]}
 {
     std::ifstream ifs{fname};
     if (!ifs)
@@ -122,7 +122,7 @@ Matrix::Matrix(const int rs, const int cs, const std::string &fname)
         throw std::runtime_error("Cannot open file!");
     }
 
-    double val;
+    float val;
     std::string line;
     int i = 0; // row index
 
@@ -142,7 +142,7 @@ Matrix::Matrix(const int rs, const int cs, const std::string &fname)
 
 // // copy constructor
 Matrix::Matrix(const Matrix &mat)
-    : rsz{mat.rsz}, csz{mat.csz}, m{new double[mat.rsz * mat.csz]}
+    : rsz{mat.rsz}, csz{mat.csz}, m{new float[mat.rsz * mat.csz]}
 {
     if (dim_equal(mat))
     {
@@ -159,7 +159,7 @@ Matrix &Matrix::operator=(const Matrix &mat)
 {
     if (dim_equal(mat))
     {
-        double *p = new double[mat.rsz * mat.csz];
+        float *p = new float[mat.rsz * mat.csz];
         // m = mat.m;
         std::copy(mat.m, mat.m + (mat.rsz * mat.csz), p);
         delete[] m;
@@ -176,7 +176,7 @@ Matrix &Matrix::operator=(const Matrix &mat)
 
 // move constructor
 Matrix::Matrix(Matrix &&mat)
-    : rsz{mat.rsz}, csz{mat.csz}, m{new double[mat.rsz * mat.csz]}
+    : rsz{mat.rsz}, csz{mat.csz}, m{new float[mat.rsz * mat.csz]}
 {
     if (dim_equal(mat))
     {
@@ -221,9 +221,9 @@ bool Matrix::dim_equal(const Matrix &M)
 }
 
 // inner product between two matrices
-double Matrix::inner_prod(const Matrix &M)
+float Matrix::inner_prod(const Matrix &M)
 {
-    double inner_prod{0.};
+    float inner_prod{0.};
 
     if (dim_equal(M))
     {
@@ -244,15 +244,15 @@ double Matrix::inner_prod(const Matrix &M)
 }
 
 // norm of matrix
-double Matrix::norm()
+float Matrix::norm()
 {
-    double norm{0.};
+    float norm{0.};
 
     for (int i = 0; i < rsz; ++i)
     {
         for (int j = 0; j < csz; ++j)
         {
-            double re = get_value(i,j);
+            float re = get_value(i,j);
             norm += re * re;
         }
     }
@@ -263,9 +263,9 @@ double Matrix::norm()
 // obtain performance of norm by performing max_iter number of
 // evaluations of norm
 // returns pair of average norm and average time
-const std::pair<double, double> Matrix::norm_performance(const int max_iter)
+const std::pair<float, float> Matrix::norm_performance(const int max_iter)
 {
-    double avgnorm, avgtime;
+    float avgnorm, avgtime;
     clock_t t;
 
     int i = 0;
@@ -273,11 +273,11 @@ const std::pair<double, double> Matrix::norm_performance(const int max_iter)
     {
         // evaluate norm with timer
         t = clock();
-        double norm_i = norm();
+        float norm_i = norm();
         t = clock() - t;
         // append to avgnorm and avgtime
         avgnorm += norm_i;
-        avgtime += (double)t;
+        avgtime += (float)t;
         ++i;
     }
 
@@ -288,7 +288,7 @@ const std::pair<double, double> Matrix::norm_performance(const int max_iter)
     avgnorm /= max_iter;
     avgtime /= max_iter;
 
-    return std::pair<double, double>(avgnorm, avgtime);
+    return std::pair<float, float>(avgnorm, avgtime);
 }
 
 // print matrix
@@ -350,8 +350,8 @@ void Matrix::print_row(const int rownum)
 
 // // constructor with specified rowsize and columnsize rs, cs
 // // where values are obtained from any pointer
-// Matrix::Matrix(const int rs, const int cs, double* arr)
-//     :rsz{rs}, csz{cs}, m{new double[rs*cs]}
+// Matrix::Matrix(const int rs, const int cs, float* arr)
+//     :rsz{rs}, csz{cs}, m{new float[rs*cs]}
 // {
 //     for (int i = 0; i < rsz; ++i)
 //     {
@@ -373,7 +373,7 @@ void Matrix::print_row(const int rownum)
 //     std::ifstream ifs {fname};
 //     Matrix M {rs, cs};
 
-//     double val;
+//     float val;
 //     char comma;
 
 //     std::string line, ss;
@@ -412,10 +412,10 @@ void Matrix::print_row(const int rownum)
 
 /*
 // input operator for importing csv files
-std::istream& operator>>(std::istream& is, std::vector<double> vec)
+std::istream& operator>>(std::istream& is, std::vector<float> vec)
 {
     char comma;
-    double data;
+    float data;
     while (comma!='\n') {
         is >> data >> comma;
         if (!is) return is;
@@ -439,7 +439,7 @@ std::istream& operator>>(std::istream& is, std::vector<double> vec)
 //     std::ifstream ifs {fname};
 //     Matrix M {rs, cs};
 
-//     double val;
+//     float val;
 //     char comma;
 
 //     for (int i=0; i<rs; ++i) {
@@ -462,9 +462,9 @@ std::istream& operator>>(std::istream& is, std::vector<double> vec)
 // }
 
 // // inner product between two matrices
-// double inner_prod(const Matrix& M1, const Matrix& M2)
+// float inner_prod(const Matrix& M1, const Matrix& M2)
 // {
-//     std::vector<double> ipvec;
+//     std::vector<float> ipvec;
 
 //     if (dim_equal(M1, M2)) {
 //         for (int i=0; i<M1.rows(); ++i) {
@@ -473,7 +473,7 @@ std::istream& operator>>(std::istream& is, std::vector<double> vec)
 //             }
 //         }
 
-//         double inner_prod = std::accumulate(ipvec.begin(), ipvec.end(), 0.); //sum elements
+//         float inner_prod = std::accumulate(ipvec.begin(), ipvec.end(), 0.); //sum elements
 //         return inner_prod;
 //     }
 //     else {

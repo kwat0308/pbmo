@@ -10,7 +10,7 @@ using namespace boost::numeric;
 // default constructor
 // initialize a rs x cs matrix (filled with zero value)
 BoostMatrix::BoostMatrix(const unsigned long rs, const unsigned long cs)
-    : rsz{rs}, csz{cs}, b{ublas::matrix<double>{rsz, csz}}
+    : rsz{rs}, csz{cs}, b{ublas::matrix<float>{rsz, csz}}
 {
     for (int i = 0; i < rsz; ++i)
     {
@@ -25,7 +25,7 @@ BoostMatrix::BoostMatrix(const unsigned long rs, const unsigned long cs)
 // where values are obtained from a numpy array
 // we equate the pointers together to pass-by-reference
 // source: https://www.linyuanshi.me/post/pybind11-array/
-BoostMatrix::BoostMatrix(const pybind11::array_t<double> &arr)
+BoostMatrix::BoostMatrix(const pybind11::array_t<float> &arr)
 {
     // request buffer info from numpy array
     pybind11::buffer_info buf = arr.request();
@@ -35,10 +35,10 @@ BoostMatrix::BoostMatrix(const pybind11::array_t<double> &arr)
     csz = buf.shape[1];
 
     // set matrix
-    b = ublas::matrix<double>{rsz, csz};
+    b = ublas::matrix<float>{rsz, csz};
 
     // set a new pointer ptr to the buffer pointer
-    double *ptr = (double *)buf.ptr;
+    float *ptr = (float *)buf.ptr;
 
     // set pointer to buffer pointer
     for (int i = 0; i < rsz; ++i)
@@ -56,7 +56,7 @@ BoostMatrix::BoostMatrix(const pybind11::array_t<double> &arr)
 // and that there are no headers
 // also assume that we know the row and column size of the dataset
 BoostMatrix::BoostMatrix(const unsigned long rs, const unsigned long cs, const std::string &fname)
-    : rsz{rs}, csz{cs}, b{ublas::matrix<double>{rsz, csz}}
+    : rsz{rs}, csz{cs}, b{ublas::matrix<float>{rsz, csz}}
 {
     std::ifstream ifs{fname};
     if (!ifs)
@@ -64,7 +64,7 @@ BoostMatrix::BoostMatrix(const unsigned long rs, const unsigned long cs, const s
         throw std::runtime_error("Cannot open file!");
     }
 
-    double val;
+    float val;
     std::string line;
     int i = 0; // row index
 
@@ -160,9 +160,9 @@ bool BoostMatrix::dim_equal(const BoostMatrix &M)
 // obtain performance of norm by performing max_iter number of
 // evaluations of norm
 // returns pair of average norm and average time
-const std::pair<double, double> BoostMatrix::norm_performance(const int max_iter)
+const std::pair<float, float> BoostMatrix::norm_performance(const int max_iter)
 {
-    double avgnorm, avgtime;
+    float avgnorm, avgtime;
     clock_t t;
 
     int i = 0;
@@ -170,11 +170,11 @@ const std::pair<double, double> BoostMatrix::norm_performance(const int max_iter
     {
         // evaluate norm with timer
         t = clock();
-        double norm_i = norm();
+        float norm_i = norm();
         t = clock() - t;
         // append to avgnorm and avgtime
         avgnorm += norm_i;
-        avgtime += (double)t;
+        avgtime += (float)t;
         ++i;
     }
 
@@ -185,7 +185,7 @@ const std::pair<double, double> BoostMatrix::norm_performance(const int max_iter
     avgnorm /= max_iter;
     avgtime /= max_iter;
 
-    return std::pair<double, double>(avgnorm, avgtime);
+    return std::pair<float, float>(avgnorm, avgtime);
 }
 
 // print BoostMatrix
@@ -248,9 +248,9 @@ void BoostMatrix::print_row(const int i)
 /*
 
 // // inner product between two matrices
-// double BoostMatrix::inner_prod(const BoostMatrix &M)
+// float BoostMatrix::inner_prod(const BoostMatrix &M)
 // {
-//     double inner_prod{0.};
+//     float inner_prod{0.};
 
 //     if (dim_equal(M))
 //     {
@@ -271,9 +271,9 @@ void BoostMatrix::print_row(const int i)
 // }
 
 // // norm of BoostMatrix
-// double BoostMatrix::norm()
+// float BoostMatrix::norm()
 // {
-//     double norm{0.};
+//     float norm{0.};
 
 //     for (int i = 0; i < rsz; ++i)
 //     {
