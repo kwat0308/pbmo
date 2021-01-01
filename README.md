@@ -1,5 +1,35 @@
 # PBMO - Performance Benchmarks using Matrix Operations
-This project compares the performance between a built-in array, an external C++ library, and Python (numpy) by evaluating the norm from matrices constructed using C-arrays, the uBLAS library from Boost, and a numpy array. 
+
+A performance benchmarking tool for different matrix implementations by evaluating matrix operations. This tool displays the benchmarked results as a graph.
+
+## Dependencies
+- NumPy
+- Matplotlib
+- tabulate
+- Python >= 3.0
+
+## Optional Dependencies
+These dependencies must be downloaded to observe performance benchmarks for other implementations.
+
+- Boost : Download [Boost](https://www.boost.org/users/download/) and unzip in the parent directory of root.
+- CuPy : Check the [CuPy Documentation](https://docs.cupy.dev/en/stable/install.html) for installation requirements of cupy. Can be installed by `pip install cupy`.
+
+## Installation
+
+Our lastest release can be downloaded by `pip`:
+
+```
+pip install pbmo
+```
+
+The most latest version can be installed through [GitHub](https://github.com/kwat0308/pbmo):
+
+```
+git clone https://github.com/kwat0308/pbmo.git
+cd pbmo/
+pip install .
+```
+<!-- This project compares the performance between a built-in array, an external C++ library, and Python (numpy) by evaluating the norm from matrices constructed using C-arrays, the uBLAS library from Boost, and a numpy array. 
 
 ###### Notes for Window command prompt users
 - All python commands (ex. **python setup.py build_ext**) should be replaced with **py** instead. 
@@ -46,7 +76,7 @@ Available flags:
 - [ ] Add more descriptions for distribution in setup.py
 - [ ] Implement performance benchmarks in C++
 - [ ] Create a Makefile for performance benchmarks in C++
-- [ ] Add uneven matrices for plotting
+- [ ] Add uneven matrices for plotting -->
 
 
 
