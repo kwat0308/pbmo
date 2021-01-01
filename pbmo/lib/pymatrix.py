@@ -92,7 +92,7 @@ class cpMatrix(pyMatrix):
     - ncols : the number of columns (default: 50)
     '''
 
-    def __init__(self, nrows=50, ncols=50, arr=None):
+    def __init__(self, arr=None, nrows=50, ncols=50):
         '''
         Parameters
         -----------

@@ -10,11 +10,6 @@ from distutils.unixccompiler import UnixCCompiler
 from distutils.msvccompiler import MSVCCompiler
 
 local_path = os.path.dirname(os.path.abspath(__file__))
-# # change compiler
-# # os.environ["CC"] = "clang++"
-
-# # os.environ["CC"] = "g++"
-# os.environ["CC"] = "cl"
 
 # Get the path to boost
 # Currently i cant find a workaround to this, we can painstakingly take only
@@ -103,7 +98,7 @@ setup(
     name='pbmo',
     version=__version__,
     description='Performance Benchmarking Tool using Matrix Operations',
-    packages=find_packages(exclude='tests'),
+    packages=['pbmo', 'pbmo.tests', 'pbmo.lib'],
     author='Keito Watanabe',
     author_email='k.wat8973@gmail.com',
     ext_modules=[libpbmo],

@@ -3,7 +3,7 @@ import path
 import time
 
 from pbmo.lib._libpbmo import Matrix, BoostMatrix
-from pbmo.lib.pymatrix import pyMatrix, npMatrix
+from pbmo.lib.pymatrix import cpMatrix, pyMatrix, npMatrix
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -43,7 +43,7 @@ class PBMO:
 
         # reduce matrix types to those which we only want
         self.matrix_types = [
-            "Python", "C++", "Boost", "NumPy"
+            "Python", "C++", "Boost", "NumPy", "CuPy"
         ]
 
         # remove matrix types that we dont want
@@ -79,7 +79,8 @@ class PBMO:
             "Python": pyMatrix(arr),
             "C++": Matrix(arr),
             "Boost": BoostMatrix(arr),
-            "Numpy": npMatrix(arr)
+            "Numpy": npMatrix(arr),
+            "Cupy": cpMatrix(arr)
         }
 
         # remove those that are excluded
@@ -240,16 +241,21 @@ class PBMO:
         else:
             fig, ax = plt.subplots(figsize=(12, 6))
 
-            for j, mat_type in enumerate(self.matrix_types):
-                ax.plot(
-                    self.dims, time_arr[j], label=mat_type, marker="o", ms=4.0, lw=2.0)
+            # get 1-D array for each size of matrix (M x N)
+            dim_arr = np.array([dim[0]*dim[1] for dim in self.dims])
 
-            ax.set_xlabel("Matrix Dimension")
+            for j, mat_type in enumerate(self.matrix_types):
+                print(time_arr[j])
+                print(mat_type)
+                ax.plot(
+                    dim_arr, time_arr[j], label=mat_type, marker="o", ms=4.0, lw=2.0)
+
+            ax.set_xlabel(r"Matrix Dimension $m \cdot n$")
             ax.set_ylabel("Average Evaluation Time [s]")
             ax.set_title("Performance Benchmarks for {0} Evaluation with Different Implementations over {1} Iterations".format(
                 op_type, self.max_iter))
 
-            ax.legend()
+            ax.legend()  # TODO: fix duplicate legend labels
             fig.tight_layout()
 
             plt.savefig(os.path.join(
@@ -260,9 +266,9 @@ class PBMO:
 
                 for j, mat_type in enumerate(self.matrix_types):
                     ax_ratio.plot(
-                        self.dims, ratio_arr[j], label=mat_type, marker="o", ms=4.0, lw=2.0)
+                        dim_arr, ratio_arr[j], label=mat_type, marker="o", ms=4.0, lw=2.0)
 
-                ax_ratio.set_xlabel("Matrix Dimension")
+                ax_ratio.set_xlabel(r"Matrix Dimension $m \cdot n$")
                 ax_ratio.set_ylabel("Performance Ratio to Python")
                 ax_ratio.set_title("Performance Benchmarks for {0} Evaluation with Different Implementations over {1} Iterations".format(
                     op_type, self.max_iter))
