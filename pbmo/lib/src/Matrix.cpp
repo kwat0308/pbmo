@@ -252,12 +252,50 @@ float Matrix::norm()
     {
         for (int j = 0; j < csz; ++j)
         {
-            float re = get_value(i,j);
+            float re = get_value(i, j);
             norm += re * re;
         }
     }
 
     return sqrt(norm);
+}
+
+Matrix Matrix::matmul(const Matrix &mat)
+{
+    if (csz != mat.rsz)
+    {
+        throw std::runtime_error("Column Dimension of self does not match row dimension of matrix.");
+    }
+
+    else
+    {
+        Matrix result = Matrix(rsz, mat.csz);
+
+        result.print_mat();
+
+        for (int i = 0; i < rsz; ++i)
+        {
+            // for (int j = 0; j < csz; ++j)
+            // {
+            for (int k = 0; k < mat.csz; ++k)
+            {
+                // result.m[i * mat.csz + k] += m[i * csz + j] * mat.m[j * mat.csz + k];
+                float prod = 0.;
+                for (int j = 0; j < csz; ++j)
+                {
+                    prod += get_value(i, j) * mat.get_value(j, k);
+                }
+                // std::cout << prod << std::endl;
+                result.set_value(i, k, prod);
+                // result.m[i * mat.csz + k] = prod;
+
+                // std::cout << result.get_value(i, k) << std::endl;
+            }
+            // }
+        }
+
+        return result;
+    }
 }
 
 // obtain performance of norm by performing max_iter number of

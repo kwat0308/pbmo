@@ -43,20 +43,20 @@ class pyMatrix:
 
         return np.sqrt(norm2)
 
-    def matmul(self, arr):
+    def matmul(self, mat):
         '''Naive Python implememtation of matrix product'''
         # raise error if ncols dont match with nrows of array
-        if self.ncols != arr.shape[0]:
+        if self.ncols != mat.nrows:
             raise ValueError("Dimensions {0} and {1} do not match.".format(
-                self.ncols, arr.shape[0]))
+                self.ncols, mat.nrows))
 
-        prod = np.zeros((self.ncols, arr.shape[0]))
+        prod = np.zeros((self.nrows, mat.ncols))
         for i in range(self.nrows):
             for j in range(self.ncols):
-                for k in range(arr.shape[1]):
-                    prod[i][j] = self.arr[i, j] * arr[j, k]
+                for k in range(mat.ncols):
+                    prod[i][k] += self.arr[i, j] * mat.arr[j, k]
 
-        return prod
+        return pyMatrix(prod)
 
 
 class npMatrix(pyMatrix):
@@ -75,9 +75,9 @@ class npMatrix(pyMatrix):
         '''NumPy Norm'''
         return np.linalg.norm(self.arr)
 
-    def matmul(self, arr):
+    def matmul(self, mat):
         '''NumPy Matrix Multiplication'''
-        return np.matmul(self.arr, arr)
+        return npMatrix(np.matmul(self.arr, mat.arr))
 
 
 class cpMatrix(pyMatrix):
@@ -110,13 +110,13 @@ class cpMatrix(pyMatrix):
         else:
             self.nrows = nrows
             self.ncols = ncols
-            self.arr = cp.zeros((nrows, ncols))
+            self.arr = cp.zeros((nrows, ncols), dtype=np.float32)
 
     def norm(self):
         '''CuPy Norm'''
         return cp.linalg.norm(self.arr)
 
-    def matmul(self, arr):
+    def matmul(self, mat):
         '''CuPy Matrix Multiplication. arr is an array initialized on host device'''
-        arr = cp.asarray(arr, dtype=np.float32)
-        return cp.matmul(self.arr, arr)
+        arr = cp.asarray(mat.arr, dtype=np.float32)
+        return cpMatrix(cp.asnumpy(cp.matmul(self.arr, arr)))

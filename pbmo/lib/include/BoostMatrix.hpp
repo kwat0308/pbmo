@@ -40,15 +40,16 @@ public:
     const unsigned long rows() const { return rsz; }                                                                        // number of rows
     const unsigned long cols() const { return csz; }                                                                        // number of columns
     const std::pair<unsigned long, unsigned long> dim() const { return std::pair<unsigned long, unsigned long>{rsz, csz}; } // dimension
-    const float get_value(const int i, const int j) const { return b(i, j); }                                              // value at (i,j) coordinate
+    const float get_value(const int i, const int j) const { return b(i, j); }                                               // value at (i,j) coordinate
 
     // operations
     bool dim_equal(const BoostMatrix &mat); // check if dimensions are equal
     // float inner_prod(const BoostMatrix & bmat) { return ublas::inner_prod(b, bmat.b); }
-    float norm() { return norm_frobenius(b); }                  //Frobenius norm
+    float norm() { return norm_frobenius(b); }                          //Frobenius norm
+    BoostMatrix matmul(const BoostMatrix &mat);                         //matrix multiplication
     const std::pair<float, float> norm_performance(const int max_iter); // evaluate performance through c++
     // utility functions
-    void print_mat();          // print BoostMatrix
+    void print_mat();                 // print BoostMatrix
     void print_row(const int rownum); // auxiliary function for print_mat() to print each row
     // BoostMatrix import_data(const int&, const int&, const std::string&);  // import data (knowing data dimensions)
     // destructor

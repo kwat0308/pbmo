@@ -157,6 +157,22 @@ bool BoostMatrix::dim_equal(const BoostMatrix &M)
            csz == M.cols();
 }
 
+// matrix multiplication
+BoostMatrix BoostMatrix::matmul(const BoostMatrix &mat)
+{
+    if (csz != mat.csz)
+    {
+        throw std::runtime_error("Column Dimension of self does not match row dimension of matrix.");
+    }
+
+    else
+    {
+        BoostMatrix result = BoostMatrix(rsz, mat.csz);
+        result.b = prod(b, mat.b);
+        return result;
+    }
+}
+
 // obtain performance of norm by performing max_iter number of
 // evaluations of norm
 // returns pair of average norm and average time

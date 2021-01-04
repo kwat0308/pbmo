@@ -106,6 +106,7 @@ setup(
     install_requires=[
         'numpy',
         'matplotlib',
+        'plotly',
         'tabulate'
     ],
     classifiers=[
