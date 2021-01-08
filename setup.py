@@ -21,22 +21,21 @@ local_path = os.path.dirname(os.path.abspath(__file__))
 def get_include_boost():
     '''Return path to where Boost is located'''
     root_dir = os.path.dirname(local_path)
-    boost_dir = os.path.join(root_dir, "boost_1_73_0")
+    boost_dir = os.path.join(root_dir, "boost_1_75_0/boost_1_75_0")
     return boost_dir
 
 
 # C/C++ extension of pbmo module
 # contains magnetic field and trajactory evaluation as core of the code
-libpbmo = Extension('pbmo.lib._libpbmo',
-                    sources=[
-                        "pbmo/lib/src/Matrix.cpp",
-                        "pbmo/lib/src/BoostMatrix.cpp",
-                        "pbmo/lib/src/pybind11_wrapper.cpp"
-                    ],
-                    language='c++',
-                    include_dirs=['pbmo/lib/include', 'pbmo/lib/extern', get_include_boost()])
-
-
+libpbmo = Extension(
+    'pbmo.lib._libpbmo',
+    sources=[
+        "pbmo/lib/src/Matrix.cpp", "pbmo/lib/src/BoostMatrix.cpp",
+        "pbmo/lib/src/pybind11_wrapper.cpp"
+    ],
+    language='c++',
+    include_dirs=['pbmo/lib/include', 'pbmo/lib/extern',
+                  get_include_boost()])
 '''
 The below settings were obtained from the Iminuit package from scikit-HEP:
 https://github.com/scikit-hep/iminuit 
@@ -60,11 +59,13 @@ compiler_opts = {
             "-Wno-sign-compare",
             "-Wno-cpp",  # suppresses #warnings from numpy
             "-Wno-deprecated-declarations",
-        ]
-        + extra_flags,
-        "extra_link_args": extra_flags,
+        ] + extra_flags,
+        "extra_link_args":
+        extra_flags,
     },
-    MSVCCompiler: {"extra_compile_args": ["/EHsc"]},
+    MSVCCompiler: {
+        "extra_compile_args": ["/EHsc"]
+    },
 }
 
 
@@ -78,6 +79,7 @@ class SmartBuildExt(build_ext):
                     getattr(e, attrib).extend(value)
 
         build_ext.build_extensions(self)
+
 
 # Getting the version number at this point is a bit tricky in Python:
 # https://packaging.python.org/en/latest/development.html#single-sourcing-the-version-across-setup-py-and-your-project
@@ -93,7 +95,6 @@ def get_version():
 
 __version__ = get_version()
 
-
 setup(
     name='pbmo',
     version=__version__,
@@ -103,12 +104,7 @@ setup(
     author_email='k.wat8973@gmail.com',
     ext_modules=[libpbmo],
     cmdclass={"build_ext": SmartBuildExt},
-    install_requires=[
-        'numpy',
-        'matplotlib',
-        'plotly',
-        'tabulate'
-    ],
+    install_requires=['numpy', 'matplotlib', 'plotly', 'tabulate'],
     classifiers=[
         'Intended Audience :: Science/Research',
         'Intended Audience :: Developers',

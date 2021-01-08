@@ -271,29 +271,21 @@ Matrix Matrix::matmul(const Matrix &mat)
     {
         Matrix result = Matrix(rsz, mat.csz);
 
-        result.print_mat();
-
+        // result.print_mat();
+        float prod = 0.;
         for (int i = 0; i < rsz; ++i)
         {
-            // for (int j = 0; j < csz; ++j)
-            // {
             for (int k = 0; k < mat.csz; ++k)
             {
-                // result.m[i * mat.csz + k] += m[i * csz + j] * mat.m[j * mat.csz + k];
                 float prod = 0.;
                 for (int j = 0; j < csz; ++j)
                 {
                     prod += get_value(i, j) * mat.get_value(j, k);
                 }
-                // std::cout << prod << std::endl;
                 result.set_value(i, k, prod);
-                // result.m[i * mat.csz + k] = prod;
-
-                // std::cout << result.get_value(i, k) << std::endl;
             }
-            // }
         }
-
+        // result.print_mat();
         return result;
     }
 }

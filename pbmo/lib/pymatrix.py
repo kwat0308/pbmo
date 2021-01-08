@@ -15,7 +15,6 @@ class pyMatrix:
     - nrows : the number of rows (default: 50)
     - ncols : the number of columns (default: 50)
     '''
-
     def __init__(self, arr=None, nrows=50, ncols=50):
         '''
         Parameters
@@ -70,7 +69,6 @@ class npMatrix(pyMatrix):
     - nrows : the number of rows (default: 50)
     - ncols : the number of columns (default: 50)
     '''
-
     def norm(self):
         '''NumPy Norm'''
         return np.linalg.norm(self.arr)
@@ -91,7 +89,6 @@ class cpMatrix(pyMatrix):
     - nrows : the number of rows (default: 50)
     - ncols : the number of columns (default: 50)
     '''
-
     def __init__(self, arr=None, nrows=50, ncols=50):
         '''
         Parameters
@@ -118,5 +115,5 @@ class cpMatrix(pyMatrix):
 
     def matmul(self, mat):
         '''CuPy Matrix Multiplication. arr is an array initialized on host device'''
-        arr = cp.asarray(mat.arr, dtype=np.float32)
-        return cpMatrix(cp.asnumpy(cp.matmul(self.arr, arr)))
+        # arr = cp.asarray(mat.arr, dtype=np.float32)
+        return cpMatrix(cp.asnumpy(cp.matmul(self.arr, mat.arr)))

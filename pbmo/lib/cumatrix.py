@@ -20,7 +20,7 @@ class cuMatrix:
     '''
 
     # kernel that contains CUDA C code
-    kernel = """
+    kernel_norm = """
     __global__ void kernel_norm(float val, const float *a, int rsz, int csz)
     {
 
@@ -33,20 +33,20 @@ class cuMatrix:
             }
         }
         val = sqrt(val);
-    }
+    }"""
 
-    __global__ void kernel_matmul(float* prod, const float *a, const float *b, int a_rsz, int a_csz, int b_csz)
+    kernel_matmul = """__global__ void kernel_matmul(float* prod, const float *a, const float *b)
     {
         int row = blockIdx.y * blockDim.y + threadIdx.y;
         int col = blockIdx.x * blockDim.x + threadIdx.x;
 
         float tmp_sum = 0.0f;
-        if (row < a_rsz && col < b_csz) {
-            for (int k = 0; k < a_csz; ++k) {
-                tmp_sum += a[row * a_csz + k] * b[k * b_csz + col];
+        if (row < %(a_nrows)d && col < %(b_ncols)d) {
+            for (int k = 0; k < %(a_ncols)d; ++k) {
+                tmp_sum += a[row * %(a_ncols)d + k] * b[k * %(b_ncols)d + col];
             }
         }
-        prod[row * b_csz + col] = tmp_sum;
+        prod[row * %(b_ncols)d + col] = tmp_sum;
     }
     """
     # kernel = """
@@ -62,7 +62,7 @@ class cuMatrix:
     # }
     # """
 
-    mod = SourceModule(kernel)
+    # mod = SourceModule(kernel)
 
     # maximum number of threads available (up to 2-D)
     MAX_THREADS_PER_DIM = 32
@@ -101,8 +101,10 @@ class cuMatrix:
             self.block_dim = (self.MAX_THREADS_PER_DIM,
                               self.MAX_THREADS_PER_DIM, 1)
 
-            self.grid_dim = (int(np.ceil(self.nrows / self.MAX_THREADS_PER_DIM)),
-                             int(np.ceil(self.ncols / self.MAX_THREADS_PER_DIM)), 1)
+            self.grid_dim = (int(np.ceil(self.nrows /
+                                         self.MAX_THREADS_PER_DIM)),
+                             int(np.ceil(self.ncols /
+                                         self.MAX_THREADS_PER_DIM)), 1)
         # otherwise set to row and column dimension
         else:
             self.block_dim = (int(self.nrows), int(self.ncols), 1)
@@ -120,11 +122,12 @@ class cuMatrix:
     #     '''Frobenius Norm'''
 
     #     self.allocate_memory()
+    # mod = SourceModule(self.kernel_norm)
 
     #     val_gpu = cuda.mem_alloc(32)
     #     # cuda.memcpy_htod(val_gpu, 0.)
 
-    #     nrm = self.mod.get_function("kernel_norm")
+    #     nrm = mod.get_function("kernel_norm")
     #     nrm(val_gpu, self.arr_gpu, self.nrows, self.ncols,
     #         block=self.block_dim,
     #         grid=self.grid_dim)
@@ -136,7 +139,15 @@ class cuMatrix:
     def matmul(self, mat):
         '''Matrix multiplication between two matrices'''
 
+        # # allocate memory on device for both matrices
         # self.allocate_memory()
+        # mat.allocate_memory()
+
+        mod = SourceModule(self.kernel_matmul % {
+            "a_nrows": self.nrows,
+            "a_ncols": self.ncols,
+            "b_ncols": mat.ncols
+        })
 
         # check dimensions first:
         if self.ncols != mat.nrows:
@@ -144,15 +155,13 @@ class cuMatrix:
                 self.ncols, mat.nrows))
 
         # allocate gpu memory for product yield
-        prod_arr = np.zeros((self.nrows, mat.ncols))
-        prodarr_gpu = cuda.mem_alloc(prod_arr.nbytes)
+        prod_arr = np.zeros((self.nrows, mat.ncols)).astype(np.float32)
 
-        mmul = self.mod.get_function("kernel_matmul")
-        mmul(prodarr_gpu, self.arr_gpu, mat.arr_gpu, self.nrows, self.ncols, mat.ncols,
-             block=self.block_dim, grid=self.grid_dim)
+        mmul = mod.get_function("kernel_matmul")
+        mmul(cuda.InOut(prod_arr),
+             self.arr_gpu,
+             mat.arr_gpu,
+             block=self.block_dim,
+             grid=self.grid_dim)
 
-        # initialize an empty array to store data from device to host
-        result_arr = np.empty_like(prod_arr)
-        cuda.memcpy_dtoh(result_arr, prodarr_gpu)
-
-        return cuMatrix(result_arr)
+        return cuMatrix(prod_arr)
