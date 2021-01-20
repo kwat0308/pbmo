@@ -1,6 +1,7 @@
 import os
 import time
 import numpy as np
+import time
 
 import pycuda.autoinit  # automatic cleanup
 import pycuda.driver as cuda
@@ -136,13 +137,15 @@ class cuMatrix:
     #     cuda.memcpy_dtoh(val, val_gpu)
     #     return val
 
-    def matmul(self, mat):
+    def matmul(self, mat, return_time=False):
         '''Matrix multiplication between two matrices'''
 
         # # allocate memory on device for both matrices
         # self.allocate_memory()
         # mat.allocate_memory()
 
+        # JIT compile the cuda kernel and source module
+        # with dimension parameters
         mod = SourceModule(self.kernel_matmul % {
             "a_nrows": self.nrows,
             "a_ncols": self.ncols,
@@ -156,12 +159,30 @@ class cuMatrix:
 
         # allocate gpu memory for product yield
         prod_arr = np.zeros((self.nrows, mat.ncols)).astype(np.float32)
+        prod_arr_gpu = cuda.mem_alloc_like(prod_arr)
+        cuda.memcpy_htod(prod_arr_gpu, prod_arr)
+        # cuda.In(prod_arr)
 
+        # get matrix multiplication function
         mmul = mod.get_function("kernel_matmul")
-        mmul(cuda.InOut(prod_arr),
+
+        # also record the time it takes for the evaluation
+        t0 = time.perf_counter_ns()
+        # evaluate the matrix multiplication
+        mmul(prod_arr_gpu,
              self.arr_gpu,
              mat.arr_gpu,
              block=self.block_dim,
              grid=self.grid_dim)
 
-        return cuMatrix(prod_arr)
+        t1 = time.perf_counter_ns()
+
+        eval_time = (t1 - t0) * (1e-9)  # time for each matmul evaluation
+
+        # move from device to host
+        # cuda.Out(prod_arr)
+        prod_arr = np.zeros((self.nrows, mat.ncols)).astype(np.float32)
+        cuda.memcpy_dtoh(prod_arr, prod_arr_gpu)
+
+        return (cuMatrix(prod_arr),
+                eval_time) if return_time else cuMatrix(prod_arr)

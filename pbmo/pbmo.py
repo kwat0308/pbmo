@@ -201,15 +201,15 @@ class PBMO:
             matrix_list_1 = self.initialize_matrices(rand_arr_1)
 
             for j, mat in enumerate(matrix_list):
-                t0 = time.perf_counter_ns()
-                prod = mat.matmul(matrix_list_1[j])
-                t1 = time.perf_counter_ns()
+                # t0 = time.perf_counter_ns()
+                (_, eval_time) = mat.matmul(matrix_list_1[j], True)
+                # t1 = time.perf_counter_ns()
 
                 # append
                 # start from index 1 since evaluation @ zero index
                 # can have unwanted system effects
                 # x 1e-9 to convert to seconds
-                time_arr[i - 1][j] = (t1 - t0) * (1e-9)
+                time_arr[i - 1][j] = eval_time
 
         norm_time = np.mean(time_arr, axis=0)
 
@@ -221,10 +221,10 @@ class PBMO:
         for j, mat_type in enumerate(self.matrix_types):
             self.results[mat_type]["Norm Time"] = self.normtimes[j]
             self.results[mat_type]["Norm Ratio"] = self.normtimes[j] / \
-                self.normtimes[3]  # ratio relative to numpy
+                self.normtimes[-3]  # ratio relative to numpy
             self.results[mat_type]["Matmul Time"] = self.matmultimes[j]
             self.results[mat_type]["Matmul Ratio"] = self.matmultimes[j] / \
-                self.matmultimes[3]  # ratio relative to numpy
+                self.matmultimes[-3]  # ratio relative to numpy
 
     def print_results(self, with_plotly=False):
         '''Print results in tabular format'''

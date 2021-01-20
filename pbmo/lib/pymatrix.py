@@ -2,6 +2,7 @@ import os
 import time
 import numpy as np
 import cupy as cp
+import time
 
 
 class pyMatrix:
@@ -42,7 +43,7 @@ class pyMatrix:
 
         return np.sqrt(norm2)
 
-    def matmul(self, mat):
+    def matmul(self, mat, return_time=False):
         '''Naive Python implememtation of matrix product'''
         # raise error if ncols dont match with nrows of array
         if self.ncols != mat.nrows:
@@ -50,12 +51,18 @@ class pyMatrix:
                 self.ncols, mat.nrows))
 
         prod = np.zeros((self.nrows, mat.ncols))
+
+        # start performance timer
+        t0 = time.perf_counter_ns()
         for i in range(self.nrows):
             for j in range(self.ncols):
                 for k in range(mat.ncols):
                     prod[i][k] += self.arr[i, j] * mat.arr[j, k]
+        t1 = time.perf_counter_ns()
 
-        return pyMatrix(prod)
+        eval_time = (t1 - t0) * (1e-9)
+
+        return (pyMatrix(prod), eval_time) if return_time else pyMatrix(prod)
 
 
 class npMatrix(pyMatrix):
@@ -73,9 +80,16 @@ class npMatrix(pyMatrix):
         '''NumPy Norm'''
         return np.linalg.norm(self.arr)
 
-    def matmul(self, mat):
+    def matmul(self, mat, return_time=False):
         '''NumPy Matrix Multiplication'''
-        return npMatrix(np.matmul(self.arr, mat.arr))
+        # start performance timer
+        t0 = time.perf_counter_ns()
+        prod_arr = np.matmul(self.arr, mat.arr)
+        t1 = time.perf_counter_ns()
+
+        eval_time = (t1 - t0) * (1e-9)
+        return (npMatrix(prod_arr),
+                eval_time) if return_time else npMatrix(prod_arr)
 
 
 class cpMatrix(pyMatrix):
@@ -113,7 +127,14 @@ class cpMatrix(pyMatrix):
         '''CuPy Norm'''
         return cp.linalg.norm(self.arr)
 
-    def matmul(self, mat):
+    def matmul(self, mat, return_time=False):
         '''CuPy Matrix Multiplication. arr is an array initialized on host device'''
         # arr = cp.asarray(mat.arr, dtype=np.float32)
-        return cpMatrix(cp.asnumpy(cp.matmul(self.arr, mat.arr)))
+        # start performance timer
+        t0 = time.perf_counter_ns()
+        prod_arr = cp.matmul(self.arr, mat.arr)
+        t1 = time.perf_counter_ns()
+
+        eval_time = (t1 - t0) * (1e-9)
+        return (cpMatrix(cp.asnumpy(prod_arr)),
+                eval_time) if return_time else cpMatrix(cp.asnumpy(prod_arr))

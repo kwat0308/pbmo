@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <chrono>
 
 using namespace boost::numeric;
 
@@ -46,8 +47,9 @@ public:
     bool dim_equal(const BoostMatrix &mat); // check if dimensions are equal
     // float inner_prod(const BoostMatrix & bmat) { return ublas::inner_prod(b, bmat.b); }
     float norm() { return norm_frobenius(b); }                          //Frobenius norm
-    BoostMatrix matmul(const BoostMatrix &mat);                         //matrix multiplication
-    const std::pair<float, float> norm_performance(const int max_iter); // evaluate performance through c++
+    // BoostMatrix matmul(const BoostMatrix &mat);                         //matrix multiplication
+    std::pair<BoostMatrix, float> BoostMatrix::matmul(const BoostMatrix &mat, const bool &return_time);
+    // const std::pair<float, float> norm_performance(const int max_iter); // evaluate performance through c++
     // utility functions
     void print_mat();                 // print BoostMatrix
     void print_row(const int rownum); // auxiliary function for print_mat() to print each row

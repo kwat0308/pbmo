@@ -260,7 +260,37 @@ float Matrix::norm()
     return sqrt(norm);
 }
 
-Matrix Matrix::matmul(const Matrix &mat)
+// Matrix Matrix::matmul(const Matrix &mat)
+// {
+//     if (csz != mat.rsz)
+//     {
+//         throw std::runtime_error("Column Dimension of self does not match row dimension of matrix.");
+//     }
+
+//     else
+//     {
+//         Matrix result = Matrix(rsz, mat.csz);
+        
+//         for (int i = 0; i < rsz; ++i)
+//         {
+//             for (int k = 0; k < mat.csz; ++k)
+//             {
+//                 float prod = 0.;
+//                 for (int j = 0; j < csz; ++j)
+//                 {
+//                     prod += get_value(i, j) * mat.get_value(j, k);
+//                 }
+//                 result.set_value(i, k, prod);
+//             }
+//         }
+
+//         return result;
+//         // result.print_mat();
+//         // return result;
+//     }
+// }
+
+std::pair<Matrix, float> Matrix::matmul(const Matrix &mat, const bool &return_time)
 {
     if (csz != mat.rsz)
     {
@@ -270,9 +300,10 @@ Matrix Matrix::matmul(const Matrix &mat)
     else
     {
         Matrix result = Matrix(rsz, mat.csz);
+        
 
         // result.print_mat();
-        float prod = 0.;
+        auto start = std::chrono::high_resolution_clock::now();
         for (int i = 0; i < rsz; ++i)
         {
             for (int k = 0; k < mat.csz; ++k)
@@ -285,41 +316,49 @@ Matrix Matrix::matmul(const Matrix &mat)
                 result.set_value(i, k, prod);
             }
         }
+        auto stop = std::chrono::high_resolution_clock::now();
+
+        std::chrono::duration<float> elapsed = stop - start;
+
+        float time = elapsed.count();
+        
+        // return result and the time if return_time is true
+        return std::pair<Matrix, float>(result, time);
         // result.print_mat();
-        return result;
+        // return result;
     }
 }
 
 // obtain performance of norm by performing max_iter number of
 // evaluations of norm
 // returns pair of average norm and average time
-const std::pair<float, float> Matrix::norm_performance(const int max_iter)
-{
-    float avgnorm, avgtime;
-    clock_t t;
+// const std::pair<float, float> Matrix::norm_performance(const int max_iter)
+// {
+//     float avgnorm, avgtime;
+//     clock_t t;
 
-    int i = 0;
-    while (i < max_iter)
-    {
-        // evaluate norm with timer
-        t = clock();
-        float norm_i = norm();
-        t = clock() - t;
-        // append to avgnorm and avgtime
-        avgnorm += norm_i;
-        avgtime += (float)t;
-        ++i;
-    }
+//     int i = 0;
+//     while (i < max_iter)
+//     {
+//         // evaluate norm with timer
+//         t = clock();
+//         float norm_i = norm();
+//         t = clock() - t;
+//         // append to avgnorm and avgtime
+//         avgnorm += norm_i;
+//         avgtime += (float)t;
+//         ++i;
+//     }
 
-    // divide by ticks / second
-    avgtime /= (CLOCKS_PER_SEC);
+//     // divide by ticks / second
+//     avgtime /= (CLOCKS_PER_SEC);
 
-    // get average value
-    avgnorm /= max_iter;
-    avgtime /= max_iter;
+//     // get average value
+//     avgnorm /= max_iter;
+//     avgtime /= max_iter;
 
-    return std::pair<float, float>(avgnorm, avgtime);
-}
+//     return std::pair<float, float>(avgnorm, avgtime);
+// }
 
 // print matrix
 void Matrix::print_mat()

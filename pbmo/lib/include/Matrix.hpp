@@ -10,7 +10,8 @@
 #include <pybind11/numpy.h>
 #include <math.h>
 #include <stdexcept>
-#include <time.h>
+// #include <time.h>
+#include <chrono>
 class Matrix
 {
 private:
@@ -49,8 +50,9 @@ public:
     bool dim_equal(const Matrix &mat); // check if dimensions are equal
     float inner_prod(const Matrix &mat);
     float norm();                                               //Frobenius norm (standard matrix norm)
-    Matrix matmul(const Matrix &mat);   // matrix multiplication
-    const std::pair<float, float> norm_performance(const int max_iter); // evaluate performance through c++
+    // Matrix matmul(const Matrix &mat);   // matrix multiplication
+    std::pair<Matrix, float> matmul(const Matrix &mat, const bool &return_time);   // matrix multiplication
+    // const std::pair<float, float> norm_performance(const int max_iter); // evaluate performance through c++
     // utility functions
     void print_mat();          // print matrix
     void print_row(const int rownum); // auxiliary function for print_mat() to print each row
