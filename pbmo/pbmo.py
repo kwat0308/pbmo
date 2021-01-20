@@ -75,8 +75,8 @@ class PBMO:
 
         # headers used for printing results as tabular format
         self.headers = [
-            "Type", "Average Norm Evaluation Time [s]", "Norm Ratio to Python",
-            "Average Matmul Evaluation Time [s]", "Matmul Ratio to Python"
+            "Type", "Average Norm Evaluation Time [s]", "Norm Ratio to NumPy",
+            "Average Matmul Evaluation Time [s]", "Matmul Ratio to NumPy"
         ]
 
     def initialize_matrices(self, arr):
