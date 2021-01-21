@@ -46,8 +46,9 @@ class cuMatrix:
             for (int k = 0; k < %(a_ncols)d; ++k) {
                 tmp_sum += a[row * %(a_ncols)d + k] * b[k * %(b_ncols)d + col];
             }
+
+            prod[row * %(b_ncols)d + col] = tmp_sum;
         }
-        prod[row * %(b_ncols)d + col] = tmp_sum;
     }
     """
     # kernel = """
@@ -102,10 +103,14 @@ class cuMatrix:
             self.block_dim = (self.MAX_THREADS_PER_DIM,
                               self.MAX_THREADS_PER_DIM, 1)
 
-            self.grid_dim = (int(np.ceil(self.nrows /
-                                         self.MAX_THREADS_PER_DIM)),
-                             int(np.ceil(self.ncols /
-                                         self.MAX_THREADS_PER_DIM)), 1)
+            dx, mx = divmod(self.ncols, self.block_dim[0])
+            dy, my = divmod(self.nrows, self.block_dim[1])
+
+            # self.grid_dim = (int(np.ceil(self.nrows /
+            #                              self.MAX_THREADS_PER_DIM)),
+            #                  int(np.ceil(self.ncols /
+            #                              self.MAX_THREADS_PER_DIM)), 1)
+            self.grid_dim = (int(dx + (mx > 0)), int(dy + (my > 0)), 1)
         # otherwise set to row and column dimension
         else:
             self.block_dim = (int(self.nrows), int(self.ncols), 1)
