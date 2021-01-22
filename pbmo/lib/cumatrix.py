@@ -103,6 +103,8 @@ class cuMatrix:
             self.block_dim = (self.MAX_THREADS_PER_DIM,
                               self.MAX_THREADS_PER_DIM, 1)
 
+            # solution to grid / block dimension resolving is found from here:
+            # https://stackoverflow.com/questions/14504580/pycuda-blocks-and-grids-to-work-with-big-datas
             dx, mx = divmod(self.ncols, self.block_dim[0])
             dy, my = divmod(self.nrows, self.block_dim[1])
 
