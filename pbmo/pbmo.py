@@ -346,7 +346,7 @@ class PBMO:
             fig.show()
             fig.write_html((os.path.join(
                 PLOT_PATH,
-                "pbmo_{0}_barplot_{1}x{2}.png".format(op_type, *self.dims))))
+                "pbmo_{0}_barplot_{1}x{2}.html".format(op_type, *self.dims))))
 
             if plot_ratios:
                 # format value seen on bar graph to scientific notation
@@ -376,7 +376,7 @@ class PBMO:
                 fig_ratio.update_yaxes(type=scale)
                 fig_ratio.show()
                 fig_ratio.write_html((os.path.join(
-                    PLOT_PATH, "pbmo_{0}_barplot_ratios_{1}x{2}.png".format(
+                    PLOT_PATH, "pbmo_{0}_barplot_ratios_{1}x{2}.html".format(
                         op_type, *self.dims))))
 
         else:
@@ -408,7 +408,7 @@ class PBMO:
 
             fig.write_html(
                 (os.path.join(PLOT_PATH,
-                              "pbmo_{0}_ndims_plot.png".format(op_type))))
+                              "pbmo_{0}_ndims_plot.html".format(op_type))))
 
             if plot_ratios:
                 fig_ratio = go.Figure()
@@ -435,7 +435,7 @@ class PBMO:
 
                 fig_ratio.write_html(
                     (os.path.join(PLOT_PATH,
-                                  "pbmo_{0}_ndims_plot.png".format(op_type))))
+                                  "pbmo_{0}_ndims_plot.html".format(op_type))))
             # if isinstance(self.dims, tuple):
             #     fig, ax = plt.subplots(figsize=(12, 6))
 
