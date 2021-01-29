@@ -408,9 +408,10 @@ class PBMO:
             fig.update_yaxes(type=scale)
             fig.show()
 
-            fig.write_html(
-                (os.path.join(PLOT_PATH,
-                              "pbmo_{0}_ndims_plot.html".format(op_type))))
+            fig.write_html((os.path.join(
+                PLOT_PATH,
+                "pbmo_{0}_ndims_max{1}_plot.html".format(op_type,
+                                                         dim_arr[-1]))))
 
             if plot_ratios:
                 fig_ratio = go.Figure()
@@ -435,9 +436,9 @@ class PBMO:
                 fig_ratio.update_yaxes(type=scale)
                 fig_ratio.show()
 
-                fig_ratio.write_html(
-                    (os.path.join(PLOT_PATH,
-                                  "pbmo_{0}_ndims_plot.html".format(op_type))))
+                fig_ratio.write_html((os.path.join(
+                    PLOT_PATH,
+                    "pbmo_{0}_ndims_max{1}_ratio_plot.html".format(op_type, dim_arr[-1]))))
             # if isinstance(self.dims, tuple):
             #     fig, ax = plt.subplots(figsize=(12, 6))
 
