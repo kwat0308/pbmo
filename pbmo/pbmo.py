@@ -5,6 +5,7 @@ import time
 from pbmo.lib._libpbmo import Matrix, BoostMatrix
 from pbmo.lib.pymatrix import cpMatrix, pyMatrix, npMatrix
 from pbmo.lib.cumatrix import cuMatrix
+from pbmo.lib.cublasmatrix import cublasMatrix
 import numpy as np
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
@@ -44,7 +45,7 @@ class PBMO:
 
         # reduce matrix types to those which we only want
         self.matrix_types = [
-            "Python", "C++", "Boost", "NumPy", "CuPy", "pyCUDA"
+            "Python", "C++", "Boost", "NumPy", "CuPy", "pyCUDA", "cuBLAS"
         ]
 
         # remove matrix types that we dont want
@@ -89,7 +90,8 @@ class PBMO:
             "Boost": BoostMatrix(arr),
             "Numpy": npMatrix(arr),
             "Cupy": cpMatrix(arr),
-            "pyCUDA": cuMatrix(arr)
+            "pyCUDA": cuMatrix(arr),
+            "cuBLAS": cublasMatrix(arr)
         }
 
         # remove those that are excluded
@@ -221,10 +223,10 @@ class PBMO:
         for j, mat_type in enumerate(self.matrix_types):
             self.results[mat_type]["Norm Time"] = self.normtimes[j]
             self.results[mat_type]["Norm Ratio"] = self.normtimes[j] / \
-                self.normtimes[-3]  # ratio relative to numpy
+                self.normtimes[-4]  # ratio relative to numpy
             self.results[mat_type]["Matmul Time"] = self.matmultimes[j]
             self.results[mat_type]["Matmul Ratio"] = self.matmultimes[j] / \
-                self.matmultimes[-3]  # ratio relative to numpy
+                self.matmultimes[-4]  # ratio relative to numpy
 
     def print_results(self, with_plotly=False):
         '''Print results in tabular format'''

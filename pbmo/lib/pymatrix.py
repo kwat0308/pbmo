@@ -25,14 +25,14 @@ class pyMatrix:
         - arr : optional entry for custom array (default: None)
         '''
         if arr is not None:
-            self.arr = arr
+            self.arr = arr.astype(np.float32)
             self.nrows = arr.shape[0]
             self.ncols = arr.shape[1]
 
         else:
             self.nrows = nrows
             self.ncols = ncols
-            self.arr = np.zeros((nrows, ncols))
+            self.arr = np.zeros((nrows, ncols), dtype=np.float32)
 
     def norm(self):
         '''Naive Python implementation of Frobenius Norm'''
