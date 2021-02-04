@@ -26,6 +26,7 @@ class PBMO:
     - max_iter : the maximum number of iterations for performance evaluation
     - matrix_types : the types of implementations currently available for matrix
     '''
+
     def __init__(self, dims=(10, 10), max_iter=10000, exclude_matrices=[]):
         '''
         Initialize the performance benchmark evaluator
@@ -295,7 +296,7 @@ class PBMO:
                                  headers=self.headers,
                                  tablefmt="pretty"))
 
-    def plot_results(self, op_type="Norm", scale="linear", plot_ratios=False):
+    def plot_results(self, op_type="Matmul", scale="log", plot_ratios=False):
         '''
         Plot performance benchmark results using PlotLy
         - Plot a bar chart if we only evaluate for single matrix dimension

@@ -2,6 +2,16 @@
 
 A performance benchmarking tool for different matrix implementations by evaluating matrix operations. This tool displays the benchmarked results as a graph.
 
+Currently this package supports matrix multiplications for the following languages / implementations:
+
+- Python
+- NumPy
+- C++
+- Boost
+- CuPy
+- pyCUDA
+- cuBLAS
+
 ## Dependencies
 
 - NumPy
@@ -17,6 +27,7 @@ These dependencies **must** be downloaded to observe performance benchmarks for 
 - Boost : Download [Boost](https://www.boost.org/users/download/) and unzip in the parent directory of root.
 - CuPy : Check the [CuPy Documentation](https://docs.cupy.dev/en/stable/install.html) for installation requirements of cupy. Can be installed by using `pip`, but is required to be installed with the appropriate CUDA version.
 - pyCUDA : Check the [pyCUDA Wiki](https://wiki.tiker.net/PyCuda/Installation/Windows/) for installation requirements of pyCUDA. Can be installed by `pip install pycuda`.
+- cuBLAS : We use the `scikit-cuda` package that utilizes pyCUDA. Check the [scikit-cuda Wiki](https://scikit-cuda.readthedocs.io/en/latest/) for installation requirements. This can be installed with `pip install scikit-cuda`.
 
 ## Installation
 
@@ -33,6 +44,27 @@ git clone https://github.com/kwat0308/pbmo.git
 cd pbmo/
 pip install .
 ```
+
+## Running the Code
+
+The code can be run in any Python interactive shell, as well in a Jupyter notebook. Examples are placed in the `examples/` directory.
+
+A minimal example would be of such:
+
+```
+import numpy as np
+from pbmo import PBMO
+
+ndim = np.arange(10)  # max 10x10 matrix
+ndims = list(zip(ndim, ndim))
+
+pbmo = PBMO(dims=ndims)  # 10000 iterations
+pbmo.evaluate_matmul()
+pbmo.collect_results()
+pbmo.plot_results()  # plots log scale
+```
+
+**Note**: Running plotly on Jupyter Notebook or Jupyter Lab requires additional configurations. Check [here](https://plotly.com/python/getting-started/) for details.
 
 <!-- This project compares the performance between a built-in array, an external C++ library, and Python (numpy) by evaluating the norm from matrices constructed using C-arrays, the uBLAS library from Boost, and a numpy array.
 
