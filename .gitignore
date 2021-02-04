@@ -1,10 +1,12 @@
 .vscode/
 issues.txt
-build/**
-pbmo.egg-info/**
+build
+pbmo.egg-info
 **.pyd 
 **.pyc
 **.exp 
 **.lib 
 **.exe
 **.so
+**.ipynb_checkpoints
+pbmo_plots

@@ -1,16 +1,17 @@
 
 #include "Matrix.hpp"
-#include "BoostMatrix.hpp" 
+#include "BoostMatrix.hpp"
 #include "pybind11/pybind11.h"
-#include "pybind11/stl.h"         // for STL container type conversions
+#include "pybind11/stl.h" // for STL container type conversions
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(_libpbmo, M) {
-  /*
+PYBIND11_MODULE(_libpbmo, M)
+{
+    /*
   Extension module for pbmo to C++.
   */
-  // M.def("Extension module for pbmo to C++.");
+    // M.def("Extension module for pbmo to C++.");
     py::class_<Matrix>(M, "Matrix", py::buffer_protocol(), py::module_local())
         .def(py::init<const int, const int>())
         .def(py::init<const int, const int, const std::string &>())
@@ -23,8 +24,10 @@ PYBIND11_MODULE(_libpbmo, M) {
         .def("dim_equal", &Matrix::dim_equal)
         .def("inner_prod", &Matrix::inner_prod)
         .def("norm", &Matrix::norm)
-        .def("norm_performance", &Matrix::norm_performance)
-        .def("print_mat", &Matrix::print_mat);
+        .def("matmul", &Matrix::matmul)
+        // .def("norm_performance", &Matrix::norm_performance)
+        .def("print_mat", &Matrix::print_mat)
+        .def("print_row", &Matrix::print_row);
 
     py::class_<BoostMatrix>(M, "BoostMatrix", py::buffer_protocol(), py::module_local())
         .def(py::init<const int, const int>())
@@ -37,8 +40,9 @@ PYBIND11_MODULE(_libpbmo, M) {
         .def_property_readonly("dim", &BoostMatrix::dim)
         // .def("dim_equal", &BoostMatrix::dim_equal)
         // .def("inner_prod", &BoostMatrix::inner_prod)
-        .def("norm_performance", &BoostMatrix::norm_performance)
+        // .def("norm_performance", &BoostMatrix::norm_performance)
         .def("norm", &BoostMatrix::norm)
-        .def("print_mat", &BoostMatrix::print_mat);
-
+        .def("matmul", &BoostMatrix::matmul)
+        .def("print_mat", &BoostMatrix::print_mat)
+        .def("print_row", &BoostMatrix::print_row);
 }
