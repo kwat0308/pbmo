@@ -7,7 +7,7 @@ from pbmo.lib.pymatrix import cpMatrix, pyMatrix, npMatrix
 from pbmo.lib.cumatrix import cuMatrix
 from pbmo.lib.cublasmatrix import cublasMatrix
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
 from tabulate import tabulate

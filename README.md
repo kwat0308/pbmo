@@ -14,10 +14,9 @@ Currently this package supports matrix multiplications for the following languag
 
 ## Dependencies
 
-- NumPy
-<!-- - Matplotlib -->
-- tabulate
 - Python >= 3.0
+- NumPy
+- tabulate
 - PlotLy
 
 ## Optional Dependencies
@@ -53,7 +52,7 @@ A minimal example would be of such:
 
 ```
 import numpy as np
-from pbmo import PBMO
+from pbmo.pbmo import PBMO
 
 ndim = np.arange(10)  # max 10x10 matrix
 ndims = list(zip(ndim, ndim))
