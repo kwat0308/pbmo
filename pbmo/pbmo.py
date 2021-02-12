@@ -6,6 +6,8 @@ from pbmo.lib._libpbmo import Matrix, BoostMatrix
 from pbmo.lib.pymatrix import cpMatrix, pyMatrix, npMatrix
 from pbmo.lib.cumatrix import cuMatrix
 from pbmo.lib.cublasmatrix import cublasMatrix
+from pbmo.lib.numbamatrix import nbMatrix, nbparMatrix
+# from pbmo.lib.numbamatrix import nbMatrix, nbparMatrix, nbcudaMatrix
 import numpy as np
 # import matplotlib.pyplot as plt
 import plotly.graph_objects as go
@@ -46,7 +48,7 @@ class PBMO:
 
         # reduce matrix types to those which we only want
         self.matrix_types = [
-            "Python", "C++", "Boost", "NumPy", "CuPy", "pyCUDA", "cuBLAS"
+            "Python", "C++", "Boost", "NumPy", "CuPy", "pyCUDA", "cuBLAS", "Numba", "Numba (Parallel)"
         ]
 
         # remove matrix types that we dont want
@@ -72,7 +74,7 @@ class PBMO:
                 "Matmul Ratio": 0.
             }
             for mat_type in self.matrix_types
-        }
+        }  # dict comprehension, just like list comprehension but for dicts
         self.results["Dimensions"] = self.dims
 
         # headers used for printing results as tabular format
@@ -92,7 +94,9 @@ class PBMO:
             "Numpy": npMatrix(arr),
             "Cupy": cpMatrix(arr),
             "pyCUDA": cuMatrix(arr),
-            "cuBLAS": cublasMatrix(arr)
+            "cuBLAS": cublasMatrix(arr),
+            "Numba": nbMatrix(arr),
+            "Numba (Parallel)": nbparMatrix(arr)
         }
 
         # remove those that are excluded
@@ -218,16 +222,19 @@ class PBMO:
 
         return norm_time
 
-    def collect_results(self):
+    def collect_results(self, comp_type="NumPy"):
         '''Gather evaluated results and put them into (an) organized dictionary(ies)'''
+
+        comptype_index = self.matrix_types.index(comp_type)
+        self.results["Comparison Type"] = comp_type
 
         for j, mat_type in enumerate(self.matrix_types):
             self.results[mat_type]["Norm Time"] = self.normtimes[j]
             self.results[mat_type]["Norm Ratio"] = self.normtimes[j] / \
-                self.normtimes[-4]  # ratio relative to numpy
+                self.normtimes[comptype_index]  # ratio relative to comp_type
             self.results[mat_type]["Matmul Time"] = self.matmultimes[j]
             self.results[mat_type]["Matmul Ratio"] = self.matmultimes[j] / \
-                self.matmultimes[-4]  # ratio relative to numpy
+                self.matmultimes[comptype_index]  # ratio relative to comp_type
 
     def print_results(self, with_plotly=False):
         '''Print results in tabular format'''
@@ -312,6 +319,8 @@ class PBMO:
             for mat_type in self.matrix_types
         ])
 
+        comp_type = self.results["Comparison Type"]
+
         # make directory for plots if not already there
         if not os.path.exists(PLOT_PATH):
             os.makedirs(PLOT_PATH)
@@ -372,7 +381,7 @@ class PBMO:
                     },
                     # xaxis_tickfont_size=14,
                     yaxis=dict(
-                        title='Performance Ratio to NumPy',
+                        title='Performance Ratio to {:s}'.format(comp_type),
                         # titlefont_size=16,
                         tickfont_size=11,
                     ))
@@ -430,7 +439,7 @@ class PBMO:
                     },
                     xaxis=dict(title="Matrix Dimensions m x n"),
                     # xaxis_tickfont_size=14,
-                    yaxis=dict(title='Performance Ratio to NumPy',
+                    yaxis=dict(title='Performance Ratio to {:s}'.format(comp_type),
                                # titlefont_size=16,
                                # tickfont_size=14,
                                ))

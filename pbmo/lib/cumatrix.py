@@ -21,7 +21,7 @@ class cuMatrix:
 
     # kernel that contains CUDA C code
     kernel_norm = """
-    __global__ void kernel_norm(float val, const float *a, int rsz, int csz)
+    __global__ void kernel_norm(float* val, const float *a, int rsz, int csz)
     {
 
         int row = blockIdx.y * blockDim.y + threadIdx.y;
