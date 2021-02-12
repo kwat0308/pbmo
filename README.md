@@ -12,7 +12,7 @@ Currently this package supports matrix multiplications for the following languag
 - pyCUDA
 - cuBLAS
 - Numba (with and without CPU parallelization)
-<!-- - Numba with CUDA -->
+- Numba with CUDA
 
 ## Hard Dependencies
 
@@ -30,7 +30,7 @@ These dependencies **must** be downloaded to observe performance benchmarks for 
 - pyCUDA : Check the [pyCUDA Wiki](https://wiki.tiker.net/PyCuda/Installation/Windows/) for installation requirements of pyCUDA. Can be installed by `pip install pycuda`.
 - cuBLAS : We use the `scikit-cuda` package that utilizes pyCUDA. Check the [scikit-cuda Wiki](https://scikit-cuda.readthedocs.io/en/latest/) for installation requirements. This can be installed with `pip install scikit-cuda`.
 - Numba : Can be installed with `pip install numba`. Check [numba documentation](https://numba.readthedocs.io/en/stable/cuda/overview.html) for details.
-<!-- - Numba with CUDA : Only compatible with NVIDIA graphics card with compute capability 3.0 or above. Check [Numba with CUDA Overview](https://numba.readthedocs.io/en/stable/cuda/overview.html) for more information, as well as necessary configurations to allow Numba to access CUDA Toolkit. -->
+- Numba with CUDA : Only compatible with NVIDIA graphics card with compute capability 3.0 or above. Check [Numba with CUDA Overview](https://numba.readthedocs.io/en/stable/cuda/overview.html) for more information, as well as necessary configurations to allow Numba to access CUDA Toolkit.
 
 **Note**: Currently requires all such packages to be installed. This will be fixed in a future release.
 

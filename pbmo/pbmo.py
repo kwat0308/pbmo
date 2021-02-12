@@ -6,8 +6,8 @@ from pbmo.lib._libpbmo import Matrix, BoostMatrix
 from pbmo.lib.pymatrix import cpMatrix, pyMatrix, npMatrix
 from pbmo.lib.cumatrix import cuMatrix
 from pbmo.lib.cublasmatrix import cublasMatrix
-from pbmo.lib.numbamatrix import nbMatrix, nbparMatrix
-# from pbmo.lib.numbamatrix import nbMatrix, nbparMatrix, nbcudaMatrix
+# from pbmo.lib.numbamatrix import nbMatrix, nbparMatrix
+from pbmo.lib.numbamatrix import nbMatrix, nbparMatrix, nbcudaMatrix
 import numpy as np
 # import matplotlib.pyplot as plt
 import plotly.graph_objects as go
@@ -48,7 +48,7 @@ class PBMO:
 
         # reduce matrix types to those which we only want
         self.matrix_types = [
-            "Python", "C++", "Boost", "NumPy", "CuPy", "pyCUDA", "cuBLAS", "Numba", "Numba (Parallel)"
+            "Python", "C++", "Boost", "NumPy", "CuPy", "pyCUDA", "cuBLAS", "Numba", "Numba (Parallel)", "Numba (CUDA)"
         ]
 
         # remove matrix types that we dont want
@@ -96,7 +96,8 @@ class PBMO:
             "pyCUDA": cuMatrix(arr),
             "cuBLAS": cublasMatrix(arr),
             "Numba": nbMatrix(arr),
-            "Numba (Parallel)": nbparMatrix(arr)
+            "Numba (Parallel)": nbparMatrix(arr),
+            "Numba (CUDA)": nbcudaMatrix(arr)
         }
 
         # remove those that are excluded
