@@ -6,8 +6,8 @@ from pbmo.lib._libpbmo import Matrix, BoostMatrix
 from pbmo.lib.pymatrix import cpMatrix, pyMatrix, npMatrix
 from pbmo.lib.cumatrix import cuMatrix
 from pbmo.lib.cublasmatrix import cublasMatrix
-# from pbmo.lib.numbamatrix import nbMatrix, nbparMatrix
-from pbmo.lib.numbamatrix import nbMatrix, nbparMatrix, nbcudaMatrix
+from pbmo.lib.numbamatrix import nbMatrix, nbparMatrix
+# from pbmo.lib.numbamatrix import nbMatrix, nbparMatrix, nbcudaMatrix
 import numpy as np
 # import matplotlib.pyplot as plt
 import plotly.graph_objects as go
@@ -29,6 +29,12 @@ class PBMO:
     - matrix_types : the types of implementations currently available for matrix
     '''
 
+    color_dict = {
+        "Python": "blue", "C++": "red", "Boost": "green", "NumPy": "darkturquoise", "CuPy": "magenta",
+        "pyCUDA": "mediumpurple", "cuBLAS": "teal", "Numba": "goldenrod", "Numba (Parallel)": "coral",
+        "Numba (CUDA)": "brown"
+    }
+
     def __init__(self, dims=(10, 10), max_iter=10000, exclude_matrices=[]):
         '''
         Initialize the performance benchmark evaluator
@@ -48,7 +54,7 @@ class PBMO:
 
         # reduce matrix types to those which we only want
         self.matrix_types = [
-            "Python", "C++", "Boost", "NumPy", "CuPy", "pyCUDA", "cuBLAS", "Numba", "Numba (Parallel)", "Numba (CUDA)"
+            "Python", "C++", "Boost", "NumPy", "CuPy", "pyCUDA", "cuBLAS", "Numba", "Numba (Parallel)"
         ]
 
         # remove matrix types that we dont want
@@ -97,7 +103,7 @@ class PBMO:
             "cuBLAS": cublasMatrix(arr),
             "Numba": nbMatrix(arr),
             "Numba (Parallel)": nbparMatrix(arr),
-            "Numba (CUDA)": nbcudaMatrix(arr)
+            # "Numba (CUDA)": nbcudaMatrix(arr)
         }
 
         # remove those that are excluded
@@ -304,7 +310,7 @@ class PBMO:
                                  headers=self.headers,
                                  tablefmt="pretty"))
 
-    def plot_results(self, op_type="Matmul", scale="log", plot_ratios=False):
+    def plot_results(self, op_type="Matmul", scale="log", xscale="linear", plot_ratios=False):
         '''
         Plot performance benchmark results using PlotLy
         - Plot a bar chart if we only evaluate for single matrix dimension
@@ -376,8 +382,6 @@ class PBMO:
                 fig_ratio.update_layout(
                     title={
                         "text": title,
-                        # 'xanchor': 'center',
-                        # 'yanchor': 'top',
                         "font": dict(size=15)
                     },
                     # xaxis_tickfont_size=14,
@@ -401,13 +405,12 @@ class PBMO:
 
             for j, mat_type in enumerate(self.matrix_types):
                 fig.add_trace(
-                    go.Scatter(x=dim_arr, y=time_arr[j], name=mat_type))
+                    go.Scatter(x=dim_arr, y=time_arr[j], name=mat_type,
+                               mode="lines+markers", marker=dict(color=self.color_dict[mat_type])))
 
             fig.update_layout(
                 title={
                     "text": title,
-                    # 'xanchor': 'center',
-                    # 'yanchor': 'top',
                     "font": dict(size=15)
                 },
                 xaxis=dict(title="Matrix Dimensions m x n"),
@@ -416,6 +419,7 @@ class PBMO:
                            # titlefont_size=16,
                            # tickfont_size=14,
                            ))
+            fig.update_xaxes(type=xscale)
             fig.update_yaxes(type=scale)
             fig.show()
 
@@ -429,13 +433,12 @@ class PBMO:
 
                 for j, mat_type in enumerate(self.matrix_types):
                     fig_ratio.add_trace(
-                        go.Scatter(x=dim_arr, y=ratio_arr[j], name=mat_type))
+                        go.Scatter(x=dim_arr, y=ratio_arr[j], name=mat_type,
+                                   mode="lines+markers", marker=dict(color=self.color_dict[mat_type])))
 
                 fig_ratio.update_layout(
                     title={
                         "text": title,
-                        # 'xanchor': 'center',
-                        # 'yanchor': 'top',
                         "font": dict(size=15)
                     },
                     xaxis=dict(title="Matrix Dimensions m x n"),
@@ -444,6 +447,7 @@ class PBMO:
                                # titlefont_size=16,
                                # tickfont_size=14,
                                ))
+                fig_ratio.update_xaxes(type=xscale)
                 fig_ratio.update_yaxes(type=scale)
                 fig_ratio.show()
 
